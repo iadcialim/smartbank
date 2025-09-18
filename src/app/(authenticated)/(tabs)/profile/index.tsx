@@ -1,14 +1,14 @@
 import { Ionicons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
 import { router } from "expo-router"
-import { Alert, Pressable, ScrollView, Text, View } from "react-native"
+import { Alert, Pressable, ScrollView, Text, View, ActivityIndicator } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 import { supabase } from "@/supabase"
-import { getUserProfile } from "@/data/mockData"
+import { useProfile } from "@/hooks/useProfile"
 
 export default function ProfileScreen() {
-  const userProfile = getUserProfile()
+  const { profile, email, loading, error, refetch, isConnected } = useProfile()
 
   const handleLogout = () => {
     Alert.alert("Log out", "Are you sure you want to log out?", [
@@ -27,10 +27,65 @@ export default function ProfileScreen() {
     ])
   }
 
+  // Show loading state
+  if (loading && !profile) {
+    return (
+      <View className="flex-1 bg-neutral-50">
+        <SafeAreaView style={{ flex: 1 }}>
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color="#2791B5" />
+            <Text className="mt-4 text-[16px] text-neutral-600">
+              Loading your profile...
+            </Text>
+          </View>
+        </SafeAreaView>
+      </View>
+    )
+  }
+
+  // Show error state
+  if (error && !profile) {
+    return (
+      <View className="flex-1 bg-neutral-50">
+        <SafeAreaView style={{ flex: 1 }}>
+          <View className="flex-1 items-center justify-center px-4">
+            <Ionicons name="alert-circle" size={64} color="#EF4444" />
+            <Text className="mt-4 text-[18px] font-semibold text-[#0C212C]">
+              Error Loading Profile
+            </Text>
+            <Text className="mt-2 text-center text-[14px] text-neutral-600">
+              {error}
+            </Text>
+            <Pressable 
+              className="mt-4 rounded-lg bg-[#2791B5] px-6 py-3"
+              onPress={refetch}
+            >
+              <Text className="text-[16px] font-semibold text-white">
+                Try Again
+              </Text>
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      </View>
+    )
+  }
+
   return (
     <View className="flex-1 bg-neutral-50">
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
+          {/* Connection Status */}
+          {!isConnected && (
+            <View className="mt-4 rounded-lg bg-yellow-50 border border-yellow-200 p-3">
+              <View className="flex-row items-center">
+                <Ionicons name="warning" size={20} color="#D97706" />
+                <Text className="ml-2 text-[14px] text-yellow-800">
+                  Offline mode - Some features may be limited
+                </Text>
+              </View>
+            </View>
+          )}
+
           {/* Profile Header */}
           <View className="mt-4 items-center">
             <LinearGradient
@@ -40,10 +95,10 @@ export default function ProfileScreen() {
               <Ionicons name="person" size={40} color="white" />
             </LinearGradient>
             <Text className="mt-3 text-[24px] font-bold text-[#0C212C]">
-              {userProfile.firstName} {userProfile.lastName}
+              {profile?.first_name || 'User'} {profile?.last_name || ''}
             </Text>
             <Text className="text-[14px] font-medium text-neutral-600">
-              {userProfile.email}
+              {email || 'No email available'}
             </Text>
             <Pressable className="mt-2">
               <Text className="text-[14px] font-semibold text-[#2791B5]">
@@ -58,12 +113,12 @@ export default function ProfileScreen() {
               Personal Information
             </Text>
             
-            <ProfileInfoItem label="First Name" value={userProfile.firstName} />
-            <ProfileInfoItem label="Last Name" value={userProfile.lastName} />
-            <ProfileInfoItem label="Email" value={userProfile.email} />
-            <ProfileInfoItem label="Phone Number" value={userProfile.phoneNumber} />
-            <ProfileInfoItem label="Date of Birth" value={userProfile.dateOfBirth} />
-            <ProfileInfoItem label="Gender" value={userProfile.gender} />
+            <ProfileInfoItem label="First Name" value={profile?.first_name || 'Not provided'} />
+            <ProfileInfoItem label="Last Name" value={profile?.last_name || 'Not provided'} />
+            <ProfileInfoItem label="Email" value={email || 'Not provided'} />
+            <ProfileInfoItem label="Phone Number" value={profile?.phone_number || 'Not provided'} />
+            <ProfileInfoItem label="Date of Birth" value={profile?.date_of_birth || 'Not provided'} />
+            <ProfileInfoItem label="Gender" value={profile?.gender || 'Not provided'} />
           </View>
 
           {/* Address Information */}
@@ -72,11 +127,11 @@ export default function ProfileScreen() {
               Address Information
             </Text>
             
-            <ProfileInfoItem label="Address" value={userProfile.address} />
-            <ProfileInfoItem label="City" value={userProfile.city} />
-            <ProfileInfoItem label="State" value={userProfile.state} />
-            <ProfileInfoItem label="ZIP Code" value={userProfile.zipCode} />
-            <ProfileInfoItem label="Country" value={userProfile.country} />
+            <ProfileInfoItem label="Address" value={profile?.address || 'Not provided'} />
+            <ProfileInfoItem label="City" value={profile?.city || 'Not provided'} />
+            <ProfileInfoItem label="State" value={profile?.state || 'Not provided'} />
+            <ProfileInfoItem label="ZIP Code" value={profile?.zip_code || 'Not provided'} />
+            <ProfileInfoItem label="Country" value={profile?.country || 'Not provided'} />
           </View>
 
           {/* Settings & Actions */}

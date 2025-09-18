@@ -22,6 +22,7 @@ import { cn } from "@/utils/cn"
 
 const schema = z.object({
   email: z.string().email(),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 })
 
 export default function Page() {
@@ -33,33 +34,32 @@ export default function Page() {
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     mode: "onChange",
+    defaultValues: {
+      email: "iadcialim@example.com",
+      password: "password123",
+    },
   })
 
-  const login = handleSubmit(async ({ email }) => {
+  const login = handleSubmit(async ({ email, password }) => {
     console.log("🚀 Starting login process for:", email)
-    
-    const redirectURL = makeRedirectUri()
-    console.log("📱 Redirect URL:", redirectURL)
+    console.log("🔑 Password:", password)
 
     try {
-      console.log("📡 Making Supabase OTP request...")
-      const { data, error } = await supabase.auth.signInWithOtp({
+      console.log("📡 Making Supabase sign in request...")
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          emailRedirectTo: redirectURL,
-        },
+        password,
       })
 
       console.log("📡 Supabase response:", { data, error })
 
       if (error) {
         console.error("❌ Supabase error:", error)
-        Alert.alert("An error occurred", error.message, [{ text: "OK" }])
+        Alert.alert("Login Failed", error.message, [{ text: "OK" }])
         return
       }
 
-      console.log("✅ OTP sent successfully!")
-      // Skip confirm-email and go directly to main app
+      console.log("✅ Login successful!")
       router.replace("/(authenticated)/(tabs)/accounts")
     } catch (err) {
       console.error("💥 Network/Request error:", err)
@@ -87,7 +87,7 @@ export default function Page() {
               Login
             </Text>
             <Text className="mt-2 text-[13px] font-medium text-neutral-600">
-              Enter the email address you use to sign in to SmartBank.
+              Enter your email and password to sign in to SmartBank.
             </Text>
             <Controller
               control={control}
@@ -100,6 +100,24 @@ export default function Page() {
                   textContentType="emailAddress"
                   keyboardType="email-address"
                   placeholder="Email address"
+                  placeholderTextColor="#2B6173"
+                  editable={!isSubmitting}
+                  value={value}
+                  onChangeText={onChange}
+                  ref={ref}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="password"
+              rules={{ required: true }}
+              render={({ field: { onChange, value, ref } }) => (
+                <TextInput
+                  className="mt-4 h-14 w-full rounded-xl border-[1px] border-[#E7EAEB] px-3.5"
+                  textContentType="password"
+                  secureTextEntry
+                  placeholder="Password"
                   placeholderTextColor="#2B6173"
                   editable={!isSubmitting}
                   value={value}

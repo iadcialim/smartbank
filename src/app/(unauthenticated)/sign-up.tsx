@@ -21,6 +21,7 @@ import { cn } from "@/utils/cn"
 
 const schema = z.object({
   email: z.string().email(),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 })
 
 export default function Page() {
@@ -34,31 +35,26 @@ export default function Page() {
     mode: "onChange",
   })
 
-  const signUp = handleSubmit(async ({ email }) => {
+  const signUp = handleSubmit(async ({ email, password }) => {
     console.log("🚀 Starting sign-up process for:", email)
-    
-    const redirectURL = makeRedirectUri({})
-    console.log("📱 Redirect URL:", redirectURL)
 
     try {
-      console.log("📡 Making Supabase OTP request...")
-      const { data, error } = await supabase.auth.signInWithOtp({
+      console.log("📡 Making Supabase sign up request...")
+      const { data, error } = await supabase.auth.signUp({
         email,
-        options: {
-          emailRedirectTo: redirectURL,
-        },
+        password,
       })
 
       console.log("📡 Supabase response:", { data, error })
 
       if (error) {
         console.error("❌ Supabase error:", error)
-        Alert.alert("An error occurred", error.message, [{ text: "OK" }])
+        Alert.alert("Sign Up Failed", error.message, [{ text: "OK" }])
         return
       }
 
-      console.log("✅ OTP sent successfully!")
-      // Skip confirm-email and go directly to onboarding
+      console.log("✅ Sign up successful!")
+      // Go to onboarding
       router.replace("/")
     } catch (err) {
       console.error("💥 Network/Request error:", err)
@@ -82,10 +78,10 @@ export default function Page() {
           </View>
           <View className="flex-1 px-4">
             <Text className="mt-1 text-[34px] font-bold text-[#0C212C]">
-              What's your email?
+              Create Account
             </Text>
             <Text className="mt-2 text-[13px] font-medium text-neutral-600">
-              Enter the email address you’d like to use to sign in to SmartBank.
+              Enter your email and password to create your SmartBank account.
             </Text>
             <Controller
               control={control}
@@ -98,6 +94,24 @@ export default function Page() {
                   textContentType="emailAddress"
                   keyboardType="email-address"
                   placeholder="Email address"
+                  placeholderTextColor="#2B6173"
+                  editable={!isSubmitting}
+                  value={value}
+                  onChangeText={onChange}
+                  ref={ref}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="password"
+              rules={{ required: true }}
+              render={({ field: { onChange, value, ref } }) => (
+                <TextInput
+                  className="mt-4 h-14 w-full rounded-xl border-[1px] border-[#E7EAEB] px-3.5"
+                  textContentType="password"
+                  secureTextEntry
+                  placeholder="Password"
                   placeholderTextColor="#2B6173"
                   editable={!isSubmitting}
                   value={value}
