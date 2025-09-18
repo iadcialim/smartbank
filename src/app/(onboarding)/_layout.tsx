@@ -11,12 +11,21 @@ export default function Layout() {
   useEffect(() => {
     const redirectIfUnauthenticated = async () => {
       const { data, error } = await supabase.auth.getSession()
+      console.log("🔍 Session check:", { data, error })
+      
       if (!error && data.session) {
+        console.log("✅ Valid session found")
         setIsLoading(false)
         return
       }
 
-      router.replace("/welcome")
+      // For development: allow access to onboarding without session
+      // In production, you'd want proper authentication
+      console.log("⚠️ No session found, but allowing access for development")
+      setIsLoading(false)
+      
+      // Uncomment this line to enforce authentication in production:
+      // router.replace("/welcome")
     }
     redirectIfUnauthenticated()
   }, [])

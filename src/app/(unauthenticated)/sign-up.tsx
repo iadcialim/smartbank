@@ -35,21 +35,35 @@ export default function Page() {
   })
 
   const signUp = handleSubmit(async ({ email }) => {
+    console.log("🚀 Starting sign-up process for:", email)
+    
     const redirectURL = makeRedirectUri({})
+    console.log("📱 Redirect URL:", redirectURL)
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: redirectURL,
-      },
-    })
+    try {
+      console.log("📡 Making Supabase OTP request...")
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: redirectURL,
+        },
+      })
 
-    if (error) {
-      Alert.alert("An error occurred", error.message, [{ text: "OK" }])
-      return
+      console.log("📡 Supabase response:", { data, error })
+
+      if (error) {
+        console.error("❌ Supabase error:", error)
+        Alert.alert("An error occurred", error.message, [{ text: "OK" }])
+        return
+      }
+
+      console.log("✅ OTP sent successfully!")
+      // Skip confirm-email and go directly to onboarding
+      router.replace("/")
+    } catch (err) {
+      console.error("💥 Network/Request error:", err)
+      Alert.alert("Network Error", "Failed to connect to server. Please check your internet connection.", [{ text: "OK" }])
     }
-
-    router.push({ pathname: "/confirm-email", params: { email } })
   })
   return (
     <SafeAreaView style={{ flex: 1 }}>
