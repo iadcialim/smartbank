@@ -14,8 +14,8 @@ export default function Layout() {
       console.log("🔍 Session check:", { data, error })
       
       if (!error && data.session) {
-        console.log("✅ Valid session found")
-        setIsLoading(false)
+        console.log("✅ Valid session found, redirecting to main app")
+        router.replace("/(authenticated)/(tabs)/accounts")
         return
       }
 

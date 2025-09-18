@@ -55,13 +55,14 @@ export default function Page() {
             Spend, save and manage your money in one place. Your money is safe
             with us.
           </Text>
-          <Link href="/choose-account-type" asChild>
-            <Pressable className="mb-4 h-12 w-full items-center justify-center rounded-xl bg-[#E8F569]">
-              <Text className="text-[16px] font-bold text-[#134555]">
-                Continue
-              </Text>
-            </Pressable>
-          </Link>
+          <Pressable 
+            className="mb-4 h-12 w-full items-center justify-center rounded-xl bg-[#E8F569]"
+            onPress={() => router.replace("/(authenticated)/(tabs)/accounts")}
+          >
+            <Text className="text-[16px] font-bold text-[#134555]">
+              Continue to App
+            </Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     </LinearGradient>

@@ -59,8 +59,8 @@ export default function Page() {
       }
 
       console.log("✅ OTP sent successfully!")
-      // Skip confirm-email and go directly to onboarding
-      router.replace("/")
+      // Skip confirm-email and go directly to main app
+      router.replace("/(authenticated)/(tabs)/accounts")
     } catch (err) {
       console.error("💥 Network/Request error:", err)
       Alert.alert("Network Error", "Failed to connect to server. Please check your internet connection.", [{ text: "OK" }])
