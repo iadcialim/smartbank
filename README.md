@@ -76,6 +76,12 @@ the phone verifications screens have been created but do not integrate with a ph
 brew install bun
 ```
 
+OR
+
+```shell
+npm install -g bun
+```
+
 2Clone the repo
 
 ```sh
