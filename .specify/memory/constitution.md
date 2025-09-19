@@ -1,50 +1,70 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# SmartBank Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Serverless-First Architecture
+All backend functionality MUST be implemented using AWS Lambda functions. No traditional servers or containers allowed. Each Lambda function must be single-purpose, stateless, and independently deployable. Functions must be optimized for cold start performance and follow AWS Lambda best practices.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. API Gateway Integration
+All external communication MUST go through AWS API Gateway. No direct Lambda invocation from external clients. API Gateway handles authentication, rate limiting, request/response transformation, and CORS. All endpoints must be properly documented with OpenAPI specifications.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. DynamoDB Data Layer
+All persistent data MUST be stored in DynamoDB. No relational databases or other storage systems allowed. Data modeling must follow DynamoDB best practices: single-table design where possible, proper partition/sort key design, and efficient query patterns. All data access must go through well-defined data access layers.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. TypeScript & Node.js 22
+All backend code MUST be written in TypeScript targeting Node.js 22 runtime. Strict type checking enabled. No JavaScript files allowed in production code. All Lambda functions must use the latest Node.js 22 features and follow modern TypeScript patterns.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Test-First Development (NON-NEGOTIABLE)
+TDD mandatory: Tests written → User approved → Tests fail → Then implement. Red-Green-Refactor cycle strictly enforced. All Lambda functions must have comprehensive Jest test suites covering unit tests, integration tests, and error scenarios. Test coverage must be >90%.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Security & Compliance Requirements
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Authentication & Authorization
+- All API endpoints MUST implement proper authentication using AWS Cognito or API Gateway authorizers
+- JWT tokens must be validated in every Lambda function
+- Role-based access control (RBAC) must be implemented for all user operations
+- All sensitive data must be encrypted at rest and in transit
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### Data Protection
+- PII and financial data must be encrypted using AWS KMS
+- All database queries must use parameterized statements to prevent injection
+- Audit logging must be implemented for all financial transactions
+- Data retention policies must be clearly defined and implemented
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Performance Standards
+- Lambda functions must complete within 5 seconds for standard operations
+- API Gateway response times must be <200ms for cached responses
+- DynamoDB queries must be optimized for single-digit millisecond response times
+- Cold start times must be minimized through proper Lambda configuration
+
+## Development Workflow & Quality Gates
+
+### Code Quality Standards
+- All TypeScript code must pass ESLint with strict configuration
+- Prettier must be used for consistent code formatting
+- All functions must have comprehensive JSDoc documentation
+- Code complexity must not exceed cyclomatic complexity of 10
+
+### Testing Requirements
+- Unit tests must cover all business logic with >90% coverage
+- Integration tests must cover all API endpoints and database operations
+- End-to-end tests must cover critical user journeys
+- All tests must run in CI/CD pipeline before deployment
+
+### Deployment Process
+- All changes must go through feature branches with proper naming (001-feature-name)
+- Pull requests must include comprehensive test coverage
+- All deployments must be automated through AWS CDK or Serverless Framework
+- Rollback procedures must be tested and documented
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices and architectural decisions. Amendments require:
+- Documentation of the proposed change and its justification
+- Impact analysis on existing systems
+- Approval from technical lead and security team
+- Migration plan for any breaking changes
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+All pull requests and code reviews must verify compliance with this constitution. Any deviation from these principles must be explicitly justified and documented. Use the templates in `.specify/templates/` for consistent documentation and planning.
+
+**Version**: 1.0.0 | **Ratified**: 2024-09-19 | **Last Amended**: 2024-09-19
