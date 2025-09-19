@@ -102,6 +102,9 @@ Frontend must follow a modular, component-based architecture:
 - AWS CLI and SAM CLI for backend deployment
 - Docker for local development consistency
 - Git hooks for pre-commit validation
+- ESLint and Prettier for code quality and formatting
+- Husky and lint-staged for automated pre-commit checks
+- Jest for testing framework across all projects
 
 ## Quality & Maintenance Requirements (NON-NEGOTIABLE)
 
@@ -121,6 +124,45 @@ Frontend must follow a modular, component-based architecture:
 - Code complexity must not exceed cyclomatic complexity of 10
 - SonarQube or similar static analysis tools for code quality
 - Regular code reviews with at least two approvers
+
+### Linting & Code Style Standards (NON-NEGOTIABLE)
+- **ESLint Configuration**: All projects MUST use ESLint with TypeScript support
+  - Backend: `@typescript-eslint/parser` and `@typescript-eslint/eslint-plugin`
+  - Frontend: `eslint-config-universe/native` for React Native projects
+  - Strict rules enabled: `no-unused-vars`, `no-console` (warnings), `prefer-const`
+  - TypeScript-specific rules: `@typescript-eslint/no-explicit-any`, `@typescript-eslint/explicit-function-return-type`
+  - React-specific rules: `react/jsx-boolean-value`, `react-hooks/rules-of-hooks`
+
+- **Prettier Configuration**: Consistent code formatting across all projects
+  - Single quotes for strings, semicolons required
+  - 100 character line length, 2-space indentation
+  - Trailing commas in ES5, arrow function parentheses avoided
+  - Tailwind CSS plugin for frontend projects
+
+- **Pre-commit Hooks**: Automated linting and formatting enforcement
+  - `lint-staged` for staged file processing
+  - `husky` for Git hook management
+  - Automatic Prettier formatting on commit
+  - ESLint checks must pass before commit acceptance
+
+- **IDE Integration**: Consistent development environment
+  - ESLint and Prettier extensions required for all developers
+  - Auto-format on save enabled
+  - Real-time linting feedback in IDE
+  - Consistent configuration files in project root
+
+- **CI/CD Integration**: Automated quality checks
+  - ESLint checks in all CI pipelines
+  - Prettier formatting validation
+  - Zero tolerance for linting errors in production code
+  - Automated formatting fixes where possible
+
+- **Code Style Enforcement**:
+  - No console.log statements in production code (warnings in development)
+  - Consistent import ordering and grouping
+  - Proper TypeScript type annotations required
+  - Unused variables and imports must be removed
+  - Consistent naming conventions (camelCase for variables, PascalCase for components)
 
 ### CI/CD Pipeline Requirements
 - Automated testing on every pull request
