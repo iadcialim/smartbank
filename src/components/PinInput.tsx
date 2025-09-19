@@ -70,7 +70,7 @@ const PinInput = ({ code, setCode }: PinInputProps) => {
       </Pressable>
       <TextInput
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,

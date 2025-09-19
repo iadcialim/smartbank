@@ -1,9 +1,9 @@
 // Custom hook for managing user profile with real-time updates
 // This hook provides a React-friendly interface to the ProfileService
 
-import { useState, useEffect, useCallback } from 'react'
-import { ProfileService } from '@/services/profile'
-import type { Profile, ApiResponse } from '@/types/database'
+import { useState, useEffect, useCallback } from "react"
+import { ProfileService } from "@/services/profile"
+import type { Profile, ApiResponse } from "@/types/database"
 
 export interface UseProfileReturn {
   profile: Profile | null
@@ -26,13 +26,13 @@ export function useProfile(): UseProfileReturn {
     try {
       setLoading(true)
       setError(null)
-      
+
       // Fetch profile and email in parallel
       const [profileResponse, emailResponse] = await Promise.all([
         ProfileService.getUserProfile(),
-        ProfileService.getUserEmail()
+        ProfileService.getUserEmail(),
       ])
-      
+
       if (profileResponse.error) {
         setError(profileResponse.error)
         setProfile(null)
@@ -43,13 +43,14 @@ export function useProfile(): UseProfileReturn {
       }
 
       if (emailResponse.error) {
-        console.error('Error fetching email:', emailResponse.error)
+        console.error("Error fetching email:", emailResponse.error)
         setEmail(null)
       } else {
         setEmail(emailResponse.data)
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred"
       setError(errorMessage)
       setProfile(null)
       setEmail(null)
@@ -59,25 +60,29 @@ export function useProfile(): UseProfileReturn {
     }
   }, [])
 
-  const updateProfile = useCallback(async (updates: Partial<Profile>): Promise<boolean> => {
-    try {
-      setError(null)
-      
-      const response = await ProfileService.updateProfile(updates)
-      
-      if (response.error) {
-        setError(response.error)
+  const updateProfile = useCallback(
+    async (updates: Partial<Profile>): Promise<boolean> => {
+      try {
+        setError(null)
+
+        const response = await ProfileService.updateProfile(updates)
+
+        if (response.error) {
+          setError(response.error)
+          return false
+        }
+
+        setProfile(response.data)
+        return true
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unexpected error occurred"
+        setError(errorMessage)
         return false
       }
-
-      setProfile(response.data)
-      return true
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
-      setError(errorMessage)
-      return false
-    }
-  }, [])
+    },
+    [],
+  )
 
   // Initial fetch
   useEffect(() => {
@@ -91,6 +96,6 @@ export function useProfile(): UseProfileReturn {
     error,
     refetch: fetchProfile,
     updateProfile,
-    isConnected
+    isConnected,
   }
 }

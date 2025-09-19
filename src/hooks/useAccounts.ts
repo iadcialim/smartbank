@@ -1,16 +1,18 @@
 // Custom hook for managing accounts with real-time updates
 // This hook provides a React-friendly interface to the AccountsService
 
-import { useState, useEffect, useCallback } from 'react'
-import { AccountsService } from '@/services/accounts'
-import type { Account, ApiResponse } from '@/types/database'
+import { useState, useEffect, useCallback } from "react"
+import { AccountsService } from "@/services/accounts"
+import type { Account, ApiResponse } from "@/types/database"
 
 export interface UseAccountsReturn {
   accounts: Account[]
   loading: boolean
   error: string | null
   refetch: () => Promise<void>
-  getAccountsByType: (type: 'Personal' | 'Business' | 'Savings' | 'Checking' | 'Investment') => Account[]
+  getAccountsByType: (
+    type: "Personal" | "Business" | "Savings" | "Checking" | "Investment",
+  ) => Account[]
   getTotalBalance: () => number
   isConnected: boolean
 }
@@ -25,21 +27,22 @@ export function useAccounts(): UseAccountsReturn {
     try {
       setLoading(true)
       setError(null)
-      
+
       const response = await AccountsService.getUserAccounts()
-      
+
       if (response.error) {
-        console.log('❌ Error fetching accounts:', response.error)
+        console.log("❌ Error fetching accounts:", response.error)
         setError(response.error)
         setAccounts([])
         setIsConnected(false)
       } else {
-        console.log('✅ Accounts fetched successfully:', response.data)
+        console.log("✅ Accounts fetched successfully:", response.data)
         setAccounts(response.data || [])
         setIsConnected(true)
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred"
       setError(errorMessage)
       setAccounts([])
       setIsConnected(false)
@@ -48,12 +51,18 @@ export function useAccounts(): UseAccountsReturn {
     }
   }, [])
 
-  const getAccountsByType = useCallback((type: 'Personal' | 'Business' | 'Savings' | 'Checking' | 'Investment') => {
-    return accounts.filter(account => account.type === type)
-  }, [accounts])
+  const getAccountsByType = useCallback(
+    (type: "Personal" | "Business" | "Savings" | "Checking" | "Investment") => {
+      return accounts.filter((account) => account.type === type)
+    },
+    [accounts],
+  )
 
   const getTotalBalance = useCallback(() => {
-    return accounts.reduce((total, account) => total + Number(account.balance), 0)
+    return accounts.reduce(
+      (total, account) => total + Number(account.balance),
+      0,
+    )
   }, [accounts])
 
   // Initial fetch
@@ -65,15 +74,15 @@ export function useAccounts(): UseAccountsReturn {
   useEffect(() => {
     const subscription = AccountsService.subscribeToAccountUpdates(
       (payload) => {
-        console.log('📡 Account update received:', payload)
-        
+        console.log("📡 Account update received:", payload)
+
         // Refetch accounts when changes occur
         fetchAccounts()
       },
       (error) => {
-        console.error('❌ Real-time subscription error:', error)
-        setError('Real-time updates unavailable')
-      }
+        console.error("❌ Real-time subscription error:", error)
+        setError("Real-time updates unavailable")
+      },
     )
 
     return () => {
@@ -88,34 +97,39 @@ export function useAccounts(): UseAccountsReturn {
     refetch: fetchAccounts,
     getAccountsByType,
     getTotalBalance,
-    isConnected
+    isConnected,
   }
 }
 
 // Hook for getting accounts by specific type
-export function useAccountsByType(type: 'Personal' | 'Business' | 'Savings' | 'Checking' | 'Investment') {
+export function useAccountsByType(
+  type: "Personal" | "Business" | "Savings" | "Checking" | "Investment",
+) {
   const { accounts, loading, error, refetch, isConnected } = useAccounts()
-  const filteredAccounts = accounts.filter(account => account.type === type)
+  const filteredAccounts = accounts.filter((account) => account.type === type)
 
   return {
     accounts: filteredAccounts,
     loading,
     error,
     refetch,
-    isConnected
+    isConnected,
   }
 }
 
 // Hook for getting total balance
 export function useTotalBalance() {
   const { accounts, loading, error, refetch, isConnected } = useAccounts()
-  const totalBalance = accounts.reduce((total, account) => total + Number(account.balance), 0)
+  const totalBalance = accounts.reduce(
+    (total, account) => total + Number(account.balance),
+    0,
+  )
 
   return {
     totalBalance,
     loading,
     error,
     refetch,
-    isConnected
+    isConnected,
   }
 }

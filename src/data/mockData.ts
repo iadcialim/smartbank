@@ -53,7 +53,7 @@ export const mockPersonalAccounts: Account[] = [
     bankName: "SmartBank",
   },
   {
-    id: "2", 
+    id: "2",
     type: "Personal",
     accountNumber: "****5678",
     balance: "$3,250.75",

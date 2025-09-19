@@ -58,7 +58,7 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          type: 'Personal' | 'Business' | 'Savings' | 'Checking' | 'Investment'
+          type: "Personal" | "Business" | "Savings" | "Checking" | "Investment"
           account_number: string
           balance: number
           currency: string
@@ -70,7 +70,7 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          type: 'Personal' | 'Business' | 'Savings' | 'Checking' | 'Investment'
+          type: "Personal" | "Business" | "Savings" | "Checking" | "Investment"
           account_number: string
           balance?: number
           currency?: string
@@ -82,7 +82,7 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          type?: 'Personal' | 'Business' | 'Savings' | 'Checking' | 'Investment'
+          type?: "Personal" | "Business" | "Savings" | "Checking" | "Investment"
           account_number?: string
           balance?: number
           currency?: string
@@ -97,42 +97,60 @@ export interface Database {
           id: string
           account_id: string
           transaction_id: string | null
-          type: 'sent' | 'received' | 'bill' | 'transfer' | 'deposit' | 'withdrawal'
+          type:
+            | "sent"
+            | "received"
+            | "bill"
+            | "transfer"
+            | "deposit"
+            | "withdrawal"
           recipient: string | null
           amount: number
           fee: number
           category: string | null
           description: string | null
           date: string
-          status: 'completed' | 'pending' | 'failed' | 'cancelled'
+          status: "completed" | "pending" | "failed" | "cancelled"
           created_at: string
         }
         Insert: {
           id?: string
           account_id: string
           transaction_id?: string | null
-          type: 'sent' | 'received' | 'bill' | 'transfer' | 'deposit' | 'withdrawal'
+          type:
+            | "sent"
+            | "received"
+            | "bill"
+            | "transfer"
+            | "deposit"
+            | "withdrawal"
           recipient?: string | null
           amount: number
           fee?: number
           category?: string | null
           description?: string | null
           date: string
-          status?: 'completed' | 'pending' | 'failed' | 'cancelled'
+          status?: "completed" | "pending" | "failed" | "cancelled"
           created_at?: string
         }
         Update: {
           id?: string
           account_id?: string
           transaction_id?: string | null
-          type?: 'sent' | 'received' | 'bill' | 'transfer' | 'deposit' | 'withdrawal'
+          type?:
+            | "sent"
+            | "received"
+            | "bill"
+            | "transfer"
+            | "deposit"
+            | "withdrawal"
           recipient?: string | null
           amount?: number
           fee?: number
           category?: string | null
           description?: string | null
           date?: string
-          status?: 'completed' | 'pending' | 'failed' | 'cancelled'
+          status?: "completed" | "pending" | "failed" | "cancelled"
           created_at?: string
         }
       }
@@ -140,7 +158,7 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          type: 'card' | 'bank'
+          type: "card" | "bank"
           last_four: string
           bank_name: string
           is_default: boolean
@@ -151,7 +169,7 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          type: 'card' | 'bank'
+          type: "card" | "bank"
           last_four: string
           bank_name: string
           is_default?: boolean
@@ -162,7 +180,7 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          type?: 'card' | 'bank'
+          type?: "card" | "bank"
           last_four?: string
           bank_name?: string
           is_default?: boolean
@@ -229,18 +247,23 @@ export interface Database {
 }
 
 // Convenience types for easier usage
-export type Profile = Database['public']['Tables']['profiles']['Row']
-export type Account = Database['public']['Tables']['accounts']['Row']
-export type Transaction = Database['public']['Tables']['transactions']['Row']
-export type PaymentMethod = Database['public']['Tables']['payment_methods']['Row']
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"]
+export type Account = Database["public"]["Tables"]["accounts"]["Row"]
+export type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
+export type PaymentMethod =
+  Database["public"]["Tables"]["payment_methods"]["Row"]
 
-export type AccountInsert = Database['public']['Tables']['accounts']['Insert']
-export type TransactionInsert = Database['public']['Tables']['transactions']['Insert']
-export type PaymentMethodInsert = Database['public']['Tables']['payment_methods']['Insert']
+export type AccountInsert = Database["public"]["Tables"]["accounts"]["Insert"]
+export type TransactionInsert =
+  Database["public"]["Tables"]["transactions"]["Insert"]
+export type PaymentMethodInsert =
+  Database["public"]["Tables"]["payment_methods"]["Insert"]
 
-export type AccountUpdate = Database['public']['Tables']['accounts']['Update']
-export type TransactionUpdate = Database['public']['Tables']['transactions']['Update']
-export type PaymentMethodUpdate = Database['public']['Tables']['payment_methods']['Update']
+export type AccountUpdate = Database["public"]["Tables"]["accounts"]["Update"]
+export type TransactionUpdate =
+  Database["public"]["Tables"]["transactions"]["Update"]
+export type PaymentMethodUpdate =
+  Database["public"]["Tables"]["payment_methods"]["Update"]
 
 // API Response types
 export interface ApiResponse<T> {
@@ -271,41 +294,44 @@ export interface SmartBankError {
 
 // Account types enum for type safety
 export const ACCOUNT_TYPES = {
-  PERSONAL: 'Personal',
-  BUSINESS: 'Business',
-  SAVINGS: 'Savings',
-  CHECKING: 'Checking',
-  INVESTMENT: 'Investment',
+  PERSONAL: "Personal",
+  BUSINESS: "Business",
+  SAVINGS: "Savings",
+  CHECKING: "Checking",
+  INVESTMENT: "Investment",
 } as const
 
-export type AccountType = typeof ACCOUNT_TYPES[keyof typeof ACCOUNT_TYPES]
+export type AccountType = (typeof ACCOUNT_TYPES)[keyof typeof ACCOUNT_TYPES]
 
 // Transaction types enum for type safety
 export const TRANSACTION_TYPES = {
-  SENT: 'sent',
-  RECEIVED: 'received',
-  BILL: 'bill',
-  TRANSFER: 'transfer',
-  DEPOSIT: 'deposit',
-  WITHDRAWAL: 'withdrawal',
+  SENT: "sent",
+  RECEIVED: "received",
+  BILL: "bill",
+  TRANSFER: "transfer",
+  DEPOSIT: "deposit",
+  WITHDRAWAL: "withdrawal",
 } as const
 
-export type TransactionType = typeof TRANSACTION_TYPES[keyof typeof TRANSACTION_TYPES]
+export type TransactionType =
+  (typeof TRANSACTION_TYPES)[keyof typeof TRANSACTION_TYPES]
 
 // Transaction status enum for type safety
 export const TRANSACTION_STATUS = {
-  COMPLETED: 'completed',
-  PENDING: 'pending',
-  FAILED: 'failed',
-  CANCELLED: 'cancelled',
+  COMPLETED: "completed",
+  PENDING: "pending",
+  FAILED: "failed",
+  CANCELLED: "cancelled",
 } as const
 
-export type TransactionStatus = typeof TRANSACTION_STATUS[keyof typeof TRANSACTION_STATUS]
+export type TransactionStatus =
+  (typeof TRANSACTION_STATUS)[keyof typeof TRANSACTION_STATUS]
 
 // Payment method types enum for type safety
 export const PAYMENT_METHOD_TYPES = {
-  CARD: 'card',
-  BANK: 'bank',
+  CARD: "card",
+  BANK: "bank",
 } as const
 
-export type PaymentMethodType = typeof PAYMENT_METHOD_TYPES[keyof typeof PAYMENT_METHOD_TYPES]
+export type PaymentMethodType =
+  (typeof PAYMENT_METHOD_TYPES)[keyof typeof PAYMENT_METHOD_TYPES]

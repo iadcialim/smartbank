@@ -1,14 +1,14 @@
 // Profile API service for SmartBank application
 // This service handles all profile-related operations with Supabase
 
-import { supabase } from '@/supabase'
-import type { 
-  Profile, 
-  ProfileInsert, 
-  ProfileUpdate, 
+import { supabase } from "@/supabase"
+import type {
+  Profile,
+  ProfileInsert,
+  ProfileUpdate,
   ApiResponse,
-  SmartBankError 
-} from '@/types/database'
+  SmartBankError,
+} from "@/types/database"
 
 export class ProfileService {
   /**
@@ -16,42 +16,45 @@ export class ProfileService {
    */
   static async getUserProfile(): Promise<ApiResponse<Profile>> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser()
+
       if (authError || !user) {
         return {
           data: null,
-          error: 'User not authenticated',
-          loading: false
+          error: "User not authenticated",
+          loading: false,
         }
       }
 
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
         .single()
 
       if (error) {
-        console.error('Error fetching user profile:', error)
+        console.error("Error fetching user profile:", error)
         return {
           data: null,
           error: error.message,
-          loading: false
+          loading: false,
         }
       }
 
       return {
         data,
         error: null,
-        loading: false
+        loading: false,
       }
     } catch (error) {
-      console.error('Unexpected error in getUserProfile:', error)
+      console.error("Unexpected error in getUserProfile:", error)
       return {
         data: null,
-        error: 'An unexpected error occurred',
-        loading: false
+        error: "An unexpected error occurred",
+        loading: false,
       }
     }
   }
@@ -59,47 +62,52 @@ export class ProfileService {
   /**
    * Create a new profile for the current user
    */
-  static async createProfile(profileData: Omit<ProfileInsert, 'id'>): Promise<ApiResponse<Profile>> {
+  static async createProfile(
+    profileData: Omit<ProfileInsert, "id">,
+  ): Promise<ApiResponse<Profile>> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser()
+
       if (authError || !user) {
         return {
           data: null,
-          error: 'User not authenticated',
-          loading: false
+          error: "User not authenticated",
+          loading: false,
         }
       }
 
       const { data, error } = await supabase
-        .from('profiles')
+        .from("profiles")
         .insert({
           ...profileData,
-          id: user.id
+          id: user.id,
         })
         .select()
         .single()
 
       if (error) {
-        console.error('Error creating profile:', error)
+        console.error("Error creating profile:", error)
         return {
           data: null,
           error: error.message,
-          loading: false
+          loading: false,
         }
       }
 
       return {
         data,
         error: null,
-        loading: false
+        loading: false,
       }
     } catch (error) {
-      console.error('Unexpected error in createProfile:', error)
+      console.error("Unexpected error in createProfile:", error)
       return {
         data: null,
-        error: 'An unexpected error occurred',
-        loading: false
+        error: "An unexpected error occurred",
+        loading: false,
       }
     }
   }
@@ -107,45 +115,50 @@ export class ProfileService {
   /**
    * Update the current user's profile
    */
-  static async updateProfile(updates: ProfileUpdate): Promise<ApiResponse<Profile>> {
+  static async updateProfile(
+    updates: ProfileUpdate,
+  ): Promise<ApiResponse<Profile>> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser()
+
       if (authError || !user) {
         return {
           data: null,
-          error: 'User not authenticated',
-          loading: false
+          error: "User not authenticated",
+          loading: false,
         }
       }
 
       const { data, error } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update(updates)
-        .eq('id', user.id)
+        .eq("id", user.id)
         .select()
         .single()
 
       if (error) {
-        console.error('Error updating profile:', error)
+        console.error("Error updating profile:", error)
         return {
           data: null,
           error: error.message,
-          loading: false
+          loading: false,
         }
       }
 
       return {
         data,
         error: null,
-        loading: false
+        loading: false,
       }
     } catch (error) {
-      console.error('Unexpected error in updateProfile:', error)
+      console.error("Unexpected error in updateProfile:", error)
       return {
         data: null,
-        error: 'An unexpected error occurred',
-        loading: false
+        error: "An unexpected error occurred",
+        loading: false,
       }
     }
   }
@@ -155,27 +168,30 @@ export class ProfileService {
    */
   static async getUserEmail(): Promise<ApiResponse<string>> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser()
+
       if (authError || !user) {
         return {
           data: null,
-          error: 'User not authenticated',
-          loading: false
+          error: "User not authenticated",
+          loading: false,
         }
       }
 
       return {
-        data: user.email || '',
+        data: user.email || "",
         error: null,
-        loading: false
+        loading: false,
       }
     } catch (error) {
-      console.error('Unexpected error in getUserEmail:', error)
+      console.error("Unexpected error in getUserEmail:", error)
       return {
         data: null,
-        error: 'An unexpected error occurred',
-        loading: false
+        error: "An unexpected error occurred",
+        loading: false,
       }
     }
   }
