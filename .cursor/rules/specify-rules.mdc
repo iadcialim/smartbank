@@ -1,0 +1,87 @@
+# SmartBank Development Rules
+
+**Project**: SmartBank - Australian Mobile Banking App Clone  
+**Last Updated**: 2024-09-19
+
+## Active Technologies
+- TypeScript 5.3+ (Frontend) + TypeScript 5.3+ with Node.js 22 (Backend) (001-australian-mobile-banking)
+- React Native with Expo SDK (001-australian-mobile-banking)
+- AWS SAM (001-australian-mobile-banking)
+- AWS Lambda (001-australian-mobile-banking)
+- API Gateway (001-australian-mobile-banking)
+- DynamoDB (001-australian-mobile-banking)
+- AWS Cognito (001-australian-mobile-banking)
+
+## Project Structure
+```
+api/
+├── src/
+│   ├── models/
+│   ├── services/
+│   ├── handlers/
+│   └── utils/
+├── tests/
+│   ├── contract/
+│   ├── integration/
+│   └── unit/
+├── template.yaml        # AWS SAM template
+└── samconfig.toml       # SAM configuration
+
+src/                     # React Native frontend (existing)
+├── app/
+├── components/
+├── services/
+├── hooks/
+└── utils/
+
+tests/                   # Frontend tests
+├── components/
+├── services/
+└── __mocks__/
+```
+
+## Development Commands
+```bash
+# Backend (AWS SAM)
+cd api && sam build && sam local start-api
+cd api && npm test && npm run lint
+
+# Frontend (React Native)
+cd src && npm test && npm run lint
+cd src && expo start
+```
+
+## Language-Specific Guidelines
+TypeScript: Follow strict typing, use interfaces for all data structures, implement proper error handling with typed exceptions
+
+## Recent Changes
+- 001-australian-mobile-banking: Added TypeScript 5.3+ with Node.js 22 + React Native with Expo SDK
+- 001-australian-mobile-banking: Added AWS SAM + AWS Lambda + API Gateway
+- 001-australian-mobile-banking: Added DynamoDB + AWS Cognito
+
+## Constitution Compliance
+- All backend functionality MUST use AWS Lambda functions deployed via SAM
+- All external communication MUST go through AWS API Gateway
+- All persistent data MUST be stored in DynamoDB with single-table design
+- All code MUST be written in TypeScript with strict type checking
+- Frontend MUST use React Native with Expo SDK and TypeScript
+- TDD mandatory with >90% test coverage
+- All endpoints MUST implement comprehensive input validation
+- Security: AWS Cognito auth, KMS encryption, comprehensive validation
+
+## Australian Banking Requirements
+- BSB validation for external transfers
+- BPAY integration for bill payments
+- Daily transfer limits enforcement
+- Transaction history with search capabilities
+- Real-time balance updates
+- Compliance with Australian banking regulations
+
+## Migration Context
+- Migrating from Supabase PostgreSQL to DynamoDB
+- Implementing AWS SAM for serverless backend
+- Maintaining existing React Native frontend
+- Adding new banking functionality (transfers, payments, BPAY)
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->
