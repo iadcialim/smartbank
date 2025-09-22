@@ -5,10 +5,7 @@
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 
-export const handler = (
-  event: APIGatewayProxyEvent,
-  context: Context
-): Promise<APIGatewayProxyResult> => {
+export const handler = (event: APIGatewayProxyEvent, context: Context): APIGatewayProxyResult => {
   // eslint-disable-next-line no-console
   console.log('SmartBank API Handler invoked');
   // eslint-disable-next-line no-console
