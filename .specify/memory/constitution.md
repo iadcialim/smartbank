@@ -267,6 +267,21 @@ Constitution amendments require:
   - `style(api): setup ESLint and Prettier for backend (T003)`
   - `style(frontend): configure linting and testing frameworks (T004)`
 
+### Task Tracking Protocol (NON-NEGOTIABLE)
+- **Task Status Updates**: For every completed and tested task, update the status in `specs/[feature-name]/tasks.md`
+- **Status Marking**: Change task status from `[ ]` to `[x]` in the tasks.md file
+- **Progress Tracking**: Maintain accurate task completion status for continuity across chat sessions
+- **Session Continuity**: Enable future AI sessions to pick up exactly where previous sessions left off
+- **Task Status Format**: Use consistent markdown checkbox format:
+  - `- [ ] T001 Description` (pending)
+  - `- [x] T001 Description` (completed)
+- **Update Requirements**:
+  - Mark task as completed only after successful testing
+  - Include completion timestamp in task description if needed
+  - Maintain task dependency tracking
+  - Update progress tracking sections in tasks.md
+- **Session Handoff**: Always check tasks.md at the start of new sessions to understand current progress
+
 ## Additional Considerations
 
 ### Scalability & Future-Proofing
