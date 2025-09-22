@@ -48,7 +48,7 @@
 - [x] T004 [P] Configure ESLint and Prettier for frontend in src/ ✅ (Completed & Tested)
 - [x] T005 Create AWS SAM template.yaml with DynamoDB table and Cognito User Pool ✅ (Completed & Tested)
 - [x] T006 Create samconfig.toml for multi-environment deployment ✅ (Completed & Tested)
-- [ ] T007 [P] Set up Jest testing framework for backend in api/tests/
+- [x] T007 [P] Set up Jest testing framework for backend in api/tests/ ✅ (Completed & Tested)
 - [ ] T008 [P] Set up React Testing Library for frontend in tests/
 
 ## Phase 3.2: Data Migration Setup
