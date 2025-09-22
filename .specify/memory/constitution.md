@@ -230,6 +230,43 @@ Constitution amendments require:
 - Quarterly reviews of constitutional effectiveness and updates
 - Clear escalation procedures for constitutional violations
 
+### Task Execution Protocol (NON-NEGOTIABLE)
+- **One Task at a Time**: Complete one task fully before starting the next
+- **Confirmation Required**: Always ask for explicit user confirmation before implementing any changes
+- **Summary Before Proceeding**: Provide complete summary of completed task before moving to next
+- **No Parallel Execution**: Do not start multiple tasks simultaneously without explicit approval
+- **User Testing Window**: Allow user to test and validate changes before proceeding
+- **Clear Status Updates**: Always provide current task status and what will be done next
+
+### Task Testing Protocol (NON-NEGOTIABLE)
+- **Mandatory Testing**: Every completed task MUST be tested before proceeding to the next
+- **Testing Steps Provided**: Always provide detailed, step-by-step testing instructions for each completed task
+- **Self-Testing Option**: Always ask user if they want the assistant to perform the testing automatically
+- **Test Results Documentation**: Document all test results (pass/fail) with specific details
+- **Failure Handling**: If tests fail, fix issues before proceeding to next task
+- **Verification Requirements**: Each task must be verified through:
+  - Functional testing (does it work as expected?)
+  - Integration testing (does it work with existing components?)
+  - Quality testing (does it meet constitutional standards?)
+  - User acceptance testing (does it meet user requirements?)
+
+### Git Commit Protocol (NON-NEGOTIABLE)
+- **Commit Message Generation**: For every completed task, generate a proper git commit message
+- **No Git Operations**: Never perform git operations (commit, push, pull) without explicit user confirmation
+- **Commit Message Format**: Follow conventional commit format: `type(scope): description`
+- **Commit Message Requirements**:
+  - **Type**: feat, fix, chore, docs, test, refactor, style
+  - **Scope**: api, frontend, config, deps, etc.
+  - **Description**: Clear, concise description of what was accomplished
+  - **Body**: Optional detailed explanation if needed
+  - **Footer**: Reference to task number (e.g., "Closes T001")
+- **User Confirmation**: Always ask user to confirm before suggesting git operations
+- **Commit Message Examples**:
+  - `feat(api): add AWS SAM project structure (T001)`
+  - `chore(deps): configure TypeScript and AWS dependencies (T002)`
+  - `style(api): setup ESLint and Prettier for backend (T003)`
+  - `style(frontend): configure linting and testing frameworks (T004)`
+
 ## Additional Considerations
 
 ### Scalability & Future-Proofing
