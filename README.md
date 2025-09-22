@@ -24,6 +24,18 @@ This project uses designs from Adrian Kuleszo's
 book [The UI Professional's Design Manual](https://uiadrian.gumroad.com/l/design-manual). Support him by purchasing a
 copy of his book on [Gumroad](https://uiadrian.gumroad.com/l/design-manual).
 
+## ⚠️ Constitution Compliance Required
+
+**This project is governed by the SmartBank Constitution.** All AI assistants and developers MUST:
+
+- **Read the constitution**: [`.specify/memory/constitution.md`](.specify/memory/constitution.md)
+- **Follow the checklist**: [`.specify/checklist.md`](.specify/checklist.md)
+- **Ask for confirmation** before implementing any changes
+- **Follow one-task-at-a-time** protocol
+- **Reference the constitution** before any code changes
+
+**Constitution Version**: 2.1.0 | **Last Updated**: 2024-12-19
+
 ## Demo
 
 <p align="center">

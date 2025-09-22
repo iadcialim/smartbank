@@ -48,6 +48,33 @@ Frontend must follow a modular, component-based architecture:
 - Service layer for API communication
 - Utility functions for common operations
 
+## Session Management Protocol (NON-NEGOTIABLE)
+
+### New Chat Session Checklist (MANDATORY - READ FIRST)
+Every new chat session MUST begin with:
+- [ ] Read current task status from `specs/[feature-name]/tasks.md`
+- [ ] Identify next task to execute
+- [ ] Reference Task Execution Protocol (Section below)
+- [ ] Ask user for explicit confirmation before ANY implementation
+- [ ] Never assume previous session permissions carry over
+- [ ] State "Per constitution requirement, I need your confirmation before proceeding"
+
+### AI Assistant Compliance Requirements (NON-NEGOTIABLE)
+- **MUST** state "Per constitution requirement, I need your confirmation before proceeding"
+- **MUST** reference the constitution before any code changes
+- **MUST NOT** proceed without explicit user approval
+- **MUST** provide testing instructions after each completed task
+- **MUST** follow the one-task-at-a-time rule
+- **MUST** provide task summary before moving to next task
+
+### Constitution Compliance Check (MANDATORY)
+Before implementing any task:
+- [ ] Have I read the Task Execution Protocol?
+- [ ] Have I asked for user confirmation?
+- [ ] Am I following the one-task-at-a-time rule?
+- [ ] Will I provide testing instructions after completion?
+- [ ] Am I referencing the constitution properly?
+
 ## Security & Compliance Requirements (NON-NEGOTIABLE)
 
 ### Authentication & Authorization
@@ -233,10 +260,15 @@ Constitution amendments require:
 ### Task Execution Protocol (NON-NEGOTIABLE)
 - **One Task at a Time**: Complete one task fully before starting the next
 - **Confirmation Required**: Always ask for explicit user confirmation before implementing any changes
+  - **MUST** state: "Per constitution requirement, I need your confirmation before proceeding"
+  - **MUST** wait for explicit user approval before any code changes
+  - **MUST NOT** proceed without user confirmation
 - **Summary Before Proceeding**: Provide complete summary of completed task before moving to next
 - **No Parallel Execution**: Do not start multiple tasks simultaneously without explicit approval
 - **User Testing Window**: Allow user to test and validate changes before proceeding
 - **Clear Status Updates**: Always provide current task status and what will be done next
+- **Session Continuity**: Always check tasks.md at the start of new sessions to understand current progress
+- **Constitution Reference**: Always reference this constitution before implementing any changes
 
 ### Task Testing Protocol (NON-NEGOTIABLE)
 - **Mandatory Testing**: Every completed task MUST be tested before proceeding to the next
@@ -302,4 +334,4 @@ Constitution amendments require:
 - User documentation and help systems
 - Developer onboarding documentation and procedures
 
-**Version**: 2.0.0 | **Ratified**: 2024-09-19 | **Last Amended**: 2024-09-19
+**Version**: 2.1.0 | **Ratified**: 2024-09-19 | **Last Amended**: 2024-12-19
