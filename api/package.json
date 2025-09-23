@@ -17,7 +17,12 @@
     "sam:build": "sam build",
     "sam:local": "sam local start-api",
     "sam:deploy": "sam deploy",
-    "sam:deploy:guided": "sam deploy --guided"
+    "sam:deploy:guided": "sam deploy --guided",
+    "migrate:export": "cd scripts && npm run export",
+    "migrate:transform": "cd scripts && npm run transform",
+    "migrate:import": "cd scripts && npm run import",
+    "migrate:validate": "cd scripts && npm run validate",
+    "migrate:rollback": "cd scripts && npm run rollback"
   },
   "keywords": [
     "aws-sam",

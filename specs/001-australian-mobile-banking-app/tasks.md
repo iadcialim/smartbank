@@ -52,7 +52,7 @@
 - [x] T008 [P] Set up React Testing Library for frontend in tests/ ✅ (Completed & Tested)
 
 ## Phase 3.2: Data Migration Setup
-- [ ] T009 Create Supabase data export scripts in api/scripts/
+- [x] T009 Create Supabase data export scripts in api/scripts/ ✅ (Completed & Tested)
 - [ ] T010 Create DynamoDB data transformation pipeline in api/scripts/
 - [ ] T011 Create data validation and integrity check scripts in api/scripts/
 - [ ] T012 Set up dual-read capability for migration transition

@@ -1,0 +1,20 @@
+{
+  "name": "smartbank-migration-scripts",
+  "version": "1.0.0",
+  "scripts": {
+    "export": "tsx export-supabase-data.ts",
+    "transform": "tsx transform-data.ts",
+    "import": "tsx import-dynamodb-data.ts",
+    "validate": "tsx validate-migration.ts",
+    "rollback": "tsx rollback-migration.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.2",
+    "@aws-sdk/client-dynamodb": "^3.478.0",
+    "@aws-sdk/lib-dynamodb": "^3.478.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.6.0",
+    "@types/node": "^20.9.0"
+  }
+}
