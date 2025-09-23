@@ -22,7 +22,8 @@
     "migrate:transform": "cd scripts && npm run transform",
     "migrate:import": "cd scripts && npm run import",
     "migrate:validate": "cd scripts && npm run validate",
-    "migrate:rollback": "cd scripts && npm run rollback"
+    "migrate:rollback": "cd scripts && npm run rollback",
+    "migrate:test-dual-read": "cd scripts && npm run test-dual-read"
   },
   "keywords": [
     "aws-sam",

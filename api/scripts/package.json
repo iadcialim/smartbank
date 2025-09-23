@@ -6,7 +6,8 @@
     "transform": "tsx transform-data.ts",
     "import": "tsx import-dynamodb-data.ts",
     "validate": "tsx validate-migration.ts",
-    "rollback": "tsx rollback-migration.ts"
+    "rollback": "tsx rollback-migration.ts",
+    "test-dual-read": "tsx test-dual-read.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.2",
