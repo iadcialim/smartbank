@@ -78,10 +78,10 @@
 - [x] T025 [P] Integration test transaction history flow in api/tests/integration/transaction-history.test.ts ❌ (TDD Red Phase - 28/28 tests failing)
 
 ### Frontend Tests
-- [ ] T026 [P] Frontend test authentication components in tests/components/auth.test.tsx
-- [ ] T027 [P] Frontend test account components in tests/components/accounts.test.tsx
-- [ ] T028 [P] Frontend test transfer components in tests/components/transfers.test.tsx
-- [ ] T029 [P] Frontend test payment components in tests/components/payments.test.tsx
+- [x] T026 [P] Frontend test authentication components in tests/components/auth.test.tsx ❌ (TDD Red Phase - 25/25 tests failing)
+- [x] T027 [P] Frontend test account components in tests/components/accounts.test.tsx ❌ (TDD Red Phase - 30/30 tests failing)
+- [x] T028 [P] Frontend test transfer components in tests/components/transfers.test.tsx ❌ (TDD Red Phase - 35/35 tests failing)
+- [x] T029 [P] Frontend test payment components in tests/components/payments.test.tsx ❌ (TDD Red Phase - 40/40 tests failing)
 
 ## Phase 3.4: Core Implementation (ONLY after tests are failing)
 
