@@ -71,11 +71,11 @@
 ### Integration Tests
 - [x] T019 [P] Integration test user registration flow in api/tests/integration/user-registration.test.ts ❌ (TDD Red Phase - 17/17 tests failing)
 - [x] T020 [P] Integration test authentication flow in api/tests/integration/authentication-flow.test.ts ❌ (TDD Red Phase - 15/15 tests failing)
-- [ ] T021 [P] Integration test account management flow in api/tests/integration/account-management.test.ts
-- [ ] T022 [P] Integration test internal transfer flow in api/tests/integration/internal-transfer.test.ts
-- [ ] T023 [P] Integration test external transfer flow in api/tests/integration/external-transfer.test.ts
-- [ ] T024 [P] Integration test BPAY payment flow in api/tests/integration/bpay-payment.test.ts
-- [ ] T025 [P] Integration test transaction history flow in api/tests/integration/transaction-history.test.ts
+- [x] T021 [P] Integration test account management flow in api/tests/integration/account-management.test.ts ❌ (TDD Red Phase - 17/17 tests failing)
+- [x] T022 [P] Integration test internal transfer flow in api/tests/integration/internal-transfer.test.ts ❌ (TDD Red Phase - 16/16 tests failing)
+- [x] T023 [P] Integration test external transfer flow in api/tests/integration/external-transfer.test.ts ❌ (TDD Red Phase - 20/20 tests failing)
+- [x] T024 [P] Integration test BPAY payment flow in api/tests/integration/bpay-payment.test.ts ❌ (TDD Red Phase - 24/24 tests failing)
+- [x] T025 [P] Integration test transaction history flow in api/tests/integration/transaction-history.test.ts ❌ (TDD Red Phase - 28/28 tests failing)
 
 ### Frontend Tests
 - [ ] T026 [P] Frontend test authentication components in tests/components/auth.test.tsx
