@@ -69,8 +69,8 @@
 - [x] T018 [P] Contract test BSB validation endpoint in api/tests/contract/bsb-validation-contract.test.ts ❌ (TDD Red Phase - 29/29 tests failing)
 
 ### Integration Tests
-- [ ] T019 [P] Integration test user registration flow in api/tests/integration/user-registration.test.ts
-- [ ] T020 [P] Integration test authentication flow in api/tests/integration/authentication.test.ts
+- [x] T019 [P] Integration test user registration flow in api/tests/integration/user-registration.test.ts ❌ (TDD Red Phase - 17/17 tests failing)
+- [x] T020 [P] Integration test authentication flow in api/tests/integration/authentication-flow.test.ts ❌ (TDD Red Phase - 15/15 tests failing)
 - [ ] T021 [P] Integration test account management flow in api/tests/integration/account-management.test.ts
 - [ ] T022 [P] Integration test internal transfer flow in api/tests/integration/internal-transfer.test.ts
 - [ ] T023 [P] Integration test external transfer flow in api/tests/integration/external-transfer.test.ts
