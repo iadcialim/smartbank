@@ -61,7 +61,7 @@
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 
 ### Contract Tests
-- [ ] T013 [P] Contract test auth endpoints in api/tests/contract/auth-contract.test.ts
+- [x] T013 [P] Contract test auth endpoints in api/tests/contract/auth-contract.test.ts ❌ (TDD Red Phase - 20/20 tests failing)
 - [ ] T014 [P] Contract test account endpoints in api/tests/contract/accounts-contract.test.ts
 - [ ] T015 [P] Contract test transfer endpoints in api/tests/contract/transfers-contract.test.ts
 - [ ] T016 [P] Contract test payment endpoints in api/tests/contract/payments-contract.test.ts
