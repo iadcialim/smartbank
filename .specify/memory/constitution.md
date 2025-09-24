@@ -48,6 +48,20 @@ Frontend must follow a modular, component-based architecture:
 - Service layer for API communication
 - Utility functions for common operations
 
+### VII. Three-Layer Backend Architecture (NON-NEGOTIABLE)
+All backend services MUST follow a strict three-layer architecture pattern:
+- **Controller Layer (Handlers)**: Lambda functions that handle HTTP requests/responses
+- **Service Layer**: Business logic and orchestration between controllers and repositories
+- **Repository Layer**: Data access and persistence operations with DynamoDB
+
+**Implementation Requirements**:
+- Each service must be implemented completely (all 3 layers) before starting the next service
+- Controllers MUST NOT contain business logic - only request/response handling
+- Services MUST contain all business logic and validation rules
+- Repositories MUST handle all data access operations and DynamoDB interactions
+- Clear separation of concerns with proper dependency injection
+- Frontend integration must be completed for each service before moving to the next
+
 ## Session Management Protocol (NON-NEGOTIABLE)
 
 ### New Chat Session Checklist (MANDATORY - READ FIRST)
@@ -258,61 +272,65 @@ Constitution amendments require:
 - Clear escalation procedures for constitutional violations
 
 ### Task Execution Protocol (NON-NEGOTIABLE)
-- **One Task at a Time**: Complete one task fully before starting the next
+- **One Service at a Time**: Complete one entire service (all 3 layers + frontend) before starting the next
+- **Service Completion**: Each service must include Models → Repositories → Services → Handlers → Frontend Integration
 - **Confirmation Required**: Always ask for explicit user confirmation before implementing any changes
   - **MUST** state: "Per constitution requirement, I need your confirmation before proceeding"
   - **MUST** wait for explicit user approval before any code changes
   - **MUST NOT** proceed without user confirmation
-- **Summary Before Proceeding**: Provide complete summary of completed task before moving to next
-- **No Parallel Execution**: Do not start multiple tasks simultaneously without explicit approval
-- **User Testing Window**: Allow user to test and validate changes before proceeding
-- **Clear Status Updates**: Always provide current task status and what will be done next
+- **Summary Before Proceeding**: Provide complete summary of completed service before moving to next
+- **No Parallel Service Execution**: Do not start multiple services simultaneously without explicit approval
+- **User Testing Window**: Allow user to test and validate each complete service before proceeding
+- **Clear Status Updates**: Always provide current service status and what will be done next
 - **Session Continuity**: Always check tasks.md at the start of new sessions to understand current progress
 - **Constitution Reference**: Always reference this constitution before implementing any changes
 
 ### Task Testing Protocol (NON-NEGOTIABLE)
-- **Mandatory Testing**: Every completed task MUST be tested before proceeding to the next
-- **Testing Steps Provided**: Always provide detailed, step-by-step testing instructions for each completed task
+- **Mandatory Service Testing**: Every completed service MUST be tested before proceeding to the next
+- **Service-Level Testing**: Test the complete service including all 3 layers and frontend integration
+- **Testing Steps Provided**: Always provide detailed, step-by-step testing instructions for each completed service
 - **Self-Testing Option**: Always ask user if they want the assistant to perform the testing automatically
 - **Test Results Documentation**: Document all test results (pass/fail) with specific details
-- **Failure Handling**: If tests fail, fix issues before proceeding to next task
-- **Verification Requirements**: Each task must be verified through:
-  - Functional testing (does it work as expected?)
-  - Integration testing (does it work with existing components?)
+- **Failure Handling**: If tests fail, fix issues before proceeding to next service
+- **Verification Requirements**: Each service must be verified through:
+  - Functional testing (does the service work as expected?)
+  - Integration testing (does it work with existing services?)
+  - 3-Layer Architecture testing (are all layers properly implemented?)
+  - Frontend integration testing (does frontend work with the service?)
   - Quality testing (does it meet constitutional standards?)
   - User acceptance testing (does it meet user requirements?)
 
 ### Git Commit Protocol (NON-NEGOTIABLE)
-- **Commit Message Generation**: For every completed task, generate a proper git commit message
+- **Commit Message Generation**: For every completed service, generate a proper git commit message
+- **Service-Level Commits**: Commit after each complete service implementation (all 3 layers + frontend)
 - **No Git Operations**: Never perform git operations (commit, push, pull) without explicit user confirmation
 - **Commit Message Format**: Follow conventional commit format: `type(scope): description`
 - **Commit Message Requirements**:
   - **Type**: feat, fix, chore, docs, test, refactor, style
   - **Scope**: api, frontend, config, deps, etc.
-  - **Description**: Clear, concise description of what was accomplished
-  - **Body**: Optional detailed explanation if needed
-  - **Footer**: Reference to task number (e.g., "Closes T001")
+  - **Description**: Clear, concise description of what service was completed
+  - **Body**: Optional detailed explanation of 3-layer implementation
+  - **Footer**: Reference to service and task numbers (e.g., "Closes T030-T039")
 - **User Confirmation**: Always ask user to confirm before suggesting git operations
 - **Commit Message Examples**:
-  - `feat(api): add AWS SAM project structure (T001)`
-  - `chore(deps): configure TypeScript and AWS dependencies (T002)`
-  - `style(api): setup ESLint and Prettier for backend (T003)`
-  - `style(frontend): configure linting and testing frameworks (T004)`
+  - `feat(api): implement authentication service with 3-layer architecture (T030-T039)`
+  - `feat(api): implement account management service with 3-layer architecture (T040-T049)`
+  - `feat(frontend): integrate authentication service with React Native hooks (T038-T039)`
 
 ### Task Tracking Protocol (NON-NEGOTIABLE)
-- **Task Status Updates**: For every completed and tested task, update the status in `specs/[feature-name]/tasks.md`
-- **Status Marking**: Change task status from `[ ]` to `[x]` in the tasks.md file
-- **Progress Tracking**: Maintain accurate task completion status for continuity across chat sessions
+- **Service Status Updates**: For every completed and tested service, update the status in `specs/[feature-name]/tasks.md`
+- **Status Marking**: Change all service task statuses from `[ ]` to `[x]` when service is complete
+- **Progress Tracking**: Maintain accurate service completion status for continuity across chat sessions
 - **Session Continuity**: Enable future AI sessions to pick up exactly where previous sessions left off
-- **Task Status Format**: Use consistent markdown checkbox format:
-  - `- [ ] T001 Description` (pending)
-  - `- [x] T001 Description` (completed)
+- **Service Status Format**: Use consistent markdown checkbox format:
+  - `- [ ] T030-T039 Service 1: Authentication Service` (pending)
+  - `- [x] T030-T039 Service 1: Authentication Service` (completed)
 - **Update Requirements**:
-  - Mark task as completed only after successful testing
-  - Include completion timestamp in task description if needed
-  - Maintain task dependency tracking
+  - Mark service as completed only after successful testing of all layers and frontend integration
+  - Include completion timestamp in service description if needed
+  - Maintain service dependency tracking
   - Update progress tracking sections in tasks.md
-- **Session Handoff**: Always check tasks.md at the start of new sessions to understand current progress
+- **Session Handoff**: Always check tasks.md at the start of new sessions to understand current service progress
 
 ## Additional Considerations
 
@@ -334,4 +352,4 @@ Constitution amendments require:
 - User documentation and help systems
 - Developer onboarding documentation and procedures
 
-**Version**: 2.1.0 | **Ratified**: 2024-09-19 | **Last Amended**: 2024-12-19
+**Version**: 2.2.0 | **Ratified**: 2024-09-19 | **Last Amended**: 2024-12-19
