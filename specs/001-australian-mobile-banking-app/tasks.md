@@ -86,65 +86,83 @@
 ## Phase 3.4: Service-by-Service Implementation (ONLY after tests are failing)
 **NEW APPROACH: Implement one complete service at a time with full 3-layer architecture**
 
-### Service 1: Authentication Service (Complete 3-Layer Implementation)
-- [ ] T030 User model in api/src/models/user.ts
-- [ ] T031 UserRepository in api/src/repositories/user-repository.ts
-- [ ] T032 UserService in api/src/services/user-service.ts
-- [ ] T033 AuthService in api/src/services/auth-service.ts
-- [ ] T034 POST /auth/register handler in api/src/handlers/auth/register.ts
-- [ ] T035 POST /auth/login handler in api/src/handlers/auth/login.ts
-- [ ] T036 POST /auth/refresh handler in api/src/handlers/auth/refresh.ts
-- [ ] T037 POST /auth/password-reset handler in api/src/handlers/auth/password-reset.ts
-- [ ] T038 Frontend auth service integration in src/services/auth.ts
-- [ ] T039 Frontend auth hooks in src/hooks/useAuth.ts
+### Service 1: Authentication Service (Complete Implementation + Deployment + Testing)
+- [x] T030 User model in api/src/models/user.ts ✅ (Completed)
+- [x] T031 UserRepository in api/src/repositories/user-repository.ts ✅ (Completed)
+- [x] T032 UserService in api/src/services/user-service.ts ✅ (Completed)
+- [x] T033 AuthService in api/src/services/auth-service.ts ✅ (Completed)
+- [x] T034 POST /auth/register handler in api/src/handlers/auth/register.ts ✅ (Completed)
+- [x] T035 POST /auth/login handler in api/src/handlers/auth/login.ts ✅ (Completed)
+- [x] T036 POST /auth/refresh handler in api/src/handlers/auth/refresh.ts ✅ (Completed)
+- [x] T037 POST /auth/password-reset handler in api/src/handlers/auth/password-reset.ts ✅ (Completed)
+- [ ] T038 Deploy Authentication Service to AWS (sam build && sam deploy)
+- [ ] T039 Run automated tests against deployed auth endpoints
+- [ ] T040 Create manual testing instructions for auth service
+- [ ] T041 Frontend auth service integration in src/services/auth.ts
+- [ ] T042 Frontend auth hooks in src/hooks/useAuth.ts
 
-### Service 2: Account Management Service (Complete 3-Layer Implementation)
-- [ ] T040 Account model in api/src/models/account.ts
-- [ ] T041 FinancialProduct model in api/src/models/financial-product.ts
-- [ ] T042 AccountRepository in api/src/repositories/account-repository.ts
-- [ ] T043 AccountService in api/src/services/account-service.ts
-- [ ] T044 GET /accounts handler in api/src/handlers/accounts/list-accounts.ts
-- [ ] T045 POST /accounts handler in api/src/handlers/accounts/create-account.ts
-- [ ] T046 GET /accounts/{accountId} handler in api/src/handlers/accounts/get-account.ts
-- [ ] T047 GET /products handler in api/src/handlers/accounts/list-products.ts
-- [ ] T048 Frontend account service integration in src/services/accounts.ts
-- [ ] T049 Frontend account hooks in src/hooks/useAccounts.ts
+### Service 2: Account Management Service (Complete Implementation + Deployment + Testing)
+- [ ] T043 Account model in api/src/models/account.ts
+- [ ] T044 FinancialProduct model in api/src/models/financial-product.ts
+- [ ] T045 AccountRepository in api/src/repositories/account-repository.ts
+- [ ] T046 AccountService in api/src/services/account-service.ts
+- [ ] T047 GET /accounts handler in api/src/handlers/accounts/list-accounts.ts
+- [ ] T048 POST /accounts handler in api/src/handlers/accounts/create-account.ts
+- [ ] T049 GET /accounts/{accountId} handler in api/src/handlers/accounts/get-account.ts
+- [ ] T050 GET /products handler in api/src/handlers/accounts/list-products.ts
+- [ ] T051 Deploy Account Management Service to AWS
+- [ ] T052 Run automated tests against deployed account endpoints
+- [ ] T053 Create manual testing instructions for account service
+- [ ] T054 Frontend account service integration in src/services/accounts.ts
+- [ ] T055 Frontend account hooks in src/hooks/useAccounts.ts
 
-### Service 3: Transaction Service (Complete 3-Layer Implementation)
-- [ ] T050 Transaction model in api/src/models/transaction.ts
-- [ ] T051 TransactionRepository in api/src/repositories/transaction-repository.ts
-- [ ] T052 TransactionService in api/src/services/transaction-service.ts
-- [ ] T053 GET /accounts/{accountId}/transactions handler in api/src/handlers/transactions/list-transactions.ts
-- [ ] T054 Frontend transaction service integration in src/services/transactions.ts
-- [ ] T055 Frontend transaction hooks in src/hooks/useTransactions.ts
+### Service 3: Transaction Service (Complete Implementation + Deployment + Testing)
+- [ ] T056 Transaction model in api/src/models/transaction.ts
+- [ ] T057 TransactionRepository in api/src/repositories/transaction-repository.ts
+- [ ] T058 TransactionService in api/src/services/transaction-service.ts
+- [ ] T059 GET /accounts/{accountId}/transactions handler in api/src/handlers/transactions/list-transactions.ts
+- [ ] T060 Deploy Transaction Service to AWS
+- [ ] T061 Run automated tests against deployed transaction endpoints
+- [ ] T062 Create manual testing instructions for transaction service
+- [ ] T063 Frontend transaction service integration in src/services/transactions.ts
+- [ ] T064 Frontend transaction hooks in src/hooks/useTransactions.ts
 
-### Service 4: Transfer Service (Complete 3-Layer Implementation)
-- [ ] T056 Transfer model in api/src/models/transfer.ts
-- [ ] T057 TransferRepository in api/src/repositories/transfer-repository.ts
-- [ ] T058 TransferService in api/src/services/transfer-service.ts
-- [ ] T059 POST /transfers handler in api/src/handlers/transfers/create-transfer.ts
-- [ ] T060 GET /transfers/{transferId} handler in api/src/handlers/transfers/get-transfer.ts
-- [ ] T061 Frontend transfer service integration in src/services/transfers.ts
-- [ ] T062 Frontend transfer hooks in src/hooks/useTransfers.ts
+### Service 4: Transfer Service (Complete Implementation + Deployment + Testing)
+- [ ] T065 Transfer model in api/src/models/transfer.ts
+- [ ] T066 TransferRepository in api/src/repositories/transfer-repository.ts
+- [ ] T067 TransferService in api/src/services/transfer-service.ts
+- [ ] T068 POST /transfers handler in api/src/handlers/transfers/create-transfer.ts
+- [ ] T069 GET /transfers/{transferId} handler in api/src/handlers/transfers/get-transfer.ts
+- [ ] T070 Deploy Transfer Service to AWS
+- [ ] T071 Run automated tests against deployed transfer endpoints
+- [ ] T072 Create manual testing instructions for transfer service
+- [ ] T073 Frontend transfer service integration in src/services/transfers.ts
+- [ ] T074 Frontend transfer hooks in src/hooks/useTransfers.ts
 
-### Service 5: Payment Service (Complete 3-Layer Implementation)
-- [ ] T063 Payment model in api/src/models/payment.ts
-- [ ] T064 PaymentRepository in api/src/repositories/payment-repository.ts
-- [ ] T065 PaymentService in api/src/services/payment-service.ts
-- [ ] T066 POST /payments handler in api/src/handlers/payments/create-payment.ts
-- [ ] T067 GET /payments/{paymentId} handler in api/src/handlers/payments/get-payment.ts
-- [ ] T068 Frontend payment service integration in src/services/payments.ts
-- [ ] T069 Frontend payment hooks in src/hooks/usePayments.ts
+### Service 5: Payment Service (Complete Implementation + Deployment + Testing)
+- [ ] T075 Payment model in api/src/models/payment.ts
+- [ ] T076 PaymentRepository in api/src/repositories/payment-repository.ts
+- [ ] T077 PaymentService in api/src/services/payment-service.ts
+- [ ] T078 POST /payments handler in api/src/handlers/payments/create-payment.ts
+- [ ] T079 GET /payments/{paymentId} handler in api/src/handlers/payments/get-payment.ts
+- [ ] T080 Deploy Payment Service to AWS
+- [ ] T081 Run automated tests against deployed payment endpoints
+- [ ] T082 Create manual testing instructions for payment service
+- [ ] T083 Frontend payment service integration in src/services/payments.ts
+- [ ] T084 Frontend payment hooks in src/hooks/usePayments.ts
 
-### Service 6: Validation Service (Complete 3-Layer Implementation)
-- [ ] T070 BSBValidationService in api/src/services/bsb-validation-service.ts
-- [ ] T071 POST /validation/bsb handler in api/src/handlers/validation/bsb-validation.ts
-- [ ] T072 Frontend BSB validation service in src/services/bsb-validation.ts
-- [ ] T073 Frontend BSB validation hooks in src/hooks/useBSBValidation.ts
+### Service 6: Validation Service (Complete Implementation + Deployment + Testing)
+- [ ] T085 BSBValidationService in api/src/services/bsb-validation-service.ts
+- [ ] T086 POST /validation/bsb handler in api/src/handlers/validation/bsb-validation.ts
+- [ ] T087 Deploy Validation Service to AWS
+- [ ] T088 Run automated tests against deployed validation endpoints
+- [ ] T089 Create manual testing instructions for validation service
+- [ ] T090 Frontend BSB validation service in src/services/bsb-validation.ts
+- [ ] T091 Frontend BSB validation hooks in src/hooks/useBSBValidation.ts
 
 ### Shared Infrastructure
-- [ ] T074 DynamoDBRepository base class in api/src/repositories/dynamodb-repository.ts
-- [ ] T075 BaseService class in api/src/services/base-service.ts
+- [ ] T092 DynamoDBRepository base class in api/src/repositories/dynamodb-repository.ts
+- [ ] T093 BaseService class in api/src/services/base-service.ts
 
 ## Phase 3.5: Integration & Middleware
 - [ ] T076 AWS Cognito integration middleware in api/src/middleware/cognito-auth.ts
@@ -293,7 +311,7 @@ Task: "Frontend account hooks in src/hooks/useAccounts.ts"
 
 ## Progress Tracking
 
-### Completed Tasks (8/99)
+### Completed Tasks (37/120)
 - ✅ T001: AWS SAM project structure
 - ✅ T002: TypeScript project setup  
 - ✅ T003: Backend linting configuration
@@ -302,22 +320,27 @@ Task: "Frontend account hooks in src/hooks/useAccounts.ts"
 - ✅ T006: samconfig.toml for multi-environment deployment
 - ✅ T007: Jest testing framework for backend
 - ✅ T008: React Testing Library for frontend
+- ✅ T009-T012: Data migration setup (4 tasks)
+- ✅ T013-T029: TDD tests written and failing (17 tasks)
+- ✅ T030-T037: Authentication Service implementation (8 tasks)
 
 ### Current Status
 - **Phase 3.1**: 8/8 tasks completed (100%) ✅
 - **Phase 3.2**: 4/4 tasks completed (100%) ✅
-- **Next Phase**: T013-T029 - Tests First (TDD) - Contract and Integration Tests
-- **Last Updated**: 2024-09-22
+- **Phase 3.3**: 17/17 tasks completed (100%) ✅
+- **Phase 3.4 Service 1**: 8/13 tasks completed (62%) ⚠️
+- **Next Tasks**: T038-T042 - Deploy, Test, and Frontend Integration for Auth Service
+- **Last Updated**: 2024-12-19
 
 ### Session Continuity
 This file is updated after each completed and tested task to enable seamless handoff between AI chat sessions.
 
 ---
 
-**Total Tasks**: 99  
-**Completed Tasks**: 8  
-**Remaining Tasks**: 91  
+**Total Tasks**: 120  
+**Completed Tasks**: 37  
+**Remaining Tasks**: 83  
 **Parallel Tasks**: 17 (Setup, Tests, Polish)  
-**Sequential Tasks**: 76 (Service-by-Service Implementation)  
-**Estimated Duration**: 6-8 weeks (service-by-service approach)  
+**Sequential Tasks**: 103 (Service-by-Service Implementation with Deployment & Testing)  
+**Estimated Duration**: 8-10 weeks (service-by-service with deployment approach)  
 **Ready for Execution**: ✅ Yes

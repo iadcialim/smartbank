@@ -272,8 +272,10 @@ Constitution amendments require:
 - Clear escalation procedures for constitutional violations
 
 ### Task Execution Protocol (NON-NEGOTIABLE)
-- **One Service at a Time**: Complete one entire service (all 3 layers + frontend) before starting the next
-- **Service Completion**: Each service must include Models → Repositories → Services → Handlers → Frontend Integration
+- **One Service at a Time**: Complete one entire service (all layers + deployment + testing) before starting the next
+- **Service Completion**: Each service must include Models → Repositories → Services → Handlers → **Deployment** → **Automated Testing** → **Manual Testing Instructions** → Frontend Integration
+- **Deployment Mandatory**: Every backend service MUST be deployed and accessible via live API endpoints before proceeding
+- **Testing Mandatory**: Every deployed service MUST pass automated tests and provide manual testing steps
 - **Confirmation Required**: Always ask for explicit user confirmation before implementing any changes
   - **MUST** state: "Per constitution requirement, I need your confirmation before proceeding"
   - **MUST** wait for explicit user approval before any code changes
@@ -287,18 +289,24 @@ Constitution amendments require:
 
 ### Task Testing Protocol (NON-NEGOTIABLE)
 - **Mandatory Service Testing**: Every completed service MUST be tested before proceeding to the next
-- **Service-Level Testing**: Test the complete service including all 3 layers and frontend integration
+- **Three-Phase Testing**: Each service requires Deployment → Automated Testing → Manual Testing
+- **Deployment Testing**: Verify service is deployed and endpoints are live and accessible
+- **Automated Testing**: Run comprehensive test suites against deployed endpoints
+- **Manual Testing**: Provide step-by-step manual testing instructions with expected results
 - **Testing Steps Provided**: Always provide detailed, step-by-step testing instructions for each completed service
 - **Self-Testing Option**: Always ask user if they want the assistant to perform the testing automatically
 - **Test Results Documentation**: Document all test results (pass/fail) with specific details
 - **Failure Handling**: If tests fail, fix issues before proceeding to next service
 - **Verification Requirements**: Each service must be verified through:
-  - Functional testing (does the service work as expected?)
-  - Integration testing (does it work with existing services?)
-  - 3-Layer Architecture testing (are all layers properly implemented?)
-  - Frontend integration testing (does frontend work with the service?)
-  - Quality testing (does it meet constitutional standards?)
-  - User acceptance testing (does it meet user requirements?)
+  - **Deployment verification** (are endpoints live and accessible?)
+  - **Automated test verification** (do all automated tests pass?)
+  - **Manual test verification** (do manual test steps work as expected?)
+  - **Functional testing** (does the service work as expected?)
+  - **Integration testing** (does it work with existing services?)
+  - **3-Layer Architecture testing** (are all layers properly implemented?)
+  - **Frontend integration testing** (does frontend work with the service?)
+  - **Quality testing** (does it meet constitutional standards?)
+  - **User acceptance testing** (does it meet user requirements?)
 
 ### Git Commit Protocol (NON-NEGOTIABLE)
 - **Commit Message Generation**: For every completed service, generate a proper git commit message
