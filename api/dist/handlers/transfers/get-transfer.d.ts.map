@@ -1,0 +1,1 @@
+{"version":3,"file":"get-transfer.d.ts","sourceRoot":"","sources":["../../../src/handlers/transfers/get-transfer.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,oBAAoB,EAAE,qBAAqB,EAAE,OAAO,EAAE,MAAM,YAAY,CAAC;AAGlF,eAAO,MAAM,OAAO,GAClB,QAAQ,oBAAoB,EAC5B,UAAU,OAAO,EACjB,WAAW,GAAG,KACb,OAAO,CAAC,qBAAqB,CAG/B,CAAC"}

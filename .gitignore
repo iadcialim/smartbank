@@ -63,7 +63,15 @@ buck-out/
 .expo/*
 web-build/
 
+# Environment files
 .env
+.env.local
+api/.env
+api/.env.local
+
+# AWS credentials
+.aws/
+aws-exports.js
 
 # iOS
 ios

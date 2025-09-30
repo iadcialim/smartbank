@@ -145,10 +145,8 @@ Resources:
       UserPoolName: !Sub 'SmartBank-UserPool-${Stage}'
       UsernameAttributes:
         - email
-        - phone_number
       AutoVerifiedAttributes:
         - email
-        - phone_number
       Policies:
         PasswordPolicy:
           MinimumLength: 8
@@ -164,7 +162,7 @@ Resources:
           Mutable: true
         - Name: phone_number
           AttributeDataType: String
-          Required: true
+          Required: false
           Mutable: true
         - Name: given_name
           AttributeDataType: String
@@ -182,7 +180,7 @@ Resources:
           AttributeDataType: String
           Required: false
           Mutable: true
-      MfaConfiguration: OPTIONAL
+      MfaConfiguration: "OFF"
       UserPoolTags:
         Environment: !Ref Environment
         Stage: !Ref Stage
@@ -232,7 +230,6 @@ Resources:
           - "'*'"
           - !Sub "'https://smartbank-${Stage}.example.com'"
       Auth:
-        DefaultAuthorizer: CognitoAuthorizer
         Authorizers:
           CognitoAuthorizer:
             UserPoolArn: !GetAtt SmartBankUserPool.Arn

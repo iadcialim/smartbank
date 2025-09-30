@@ -3,7 +3,7 @@ import { DualReadService } from '../../services/dual-read-service';
 import { MigrationConfigManager } from '../../utils/migration-config';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
+  _event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
     const configManager = MigrationConfigManager.getInstance();
