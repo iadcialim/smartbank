@@ -1,0 +1,60 @@
+{
+  "name": "smartbank-api",
+  "version": "1.0.0",
+  "description": "SmartBank API - Australian Mobile Banking App Backend",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "npx dotenv -e .env -- jest",
+    "test:watch": "npx dotenv -e .env -- jest --watch",
+    "test:coverage": "npx dotenv -e .env -- jest --coverage",
+    "test:contract": "npx dotenv -e .env -- jest tests/contract",
+    "test:integration": "npx dotenv -e .env -- jest tests/integration",
+    "test:unit": "npx dotenv -e .env -- jest tests/unit",
+    "lint": "eslint src/**/*.ts tests/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts tests/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts tests/**/*.ts",
+    "deploy": "sam build && sam deploy",
+    "deploy:dev": "sam build && sam deploy --config-env development",
+    "deploy:staging": "sam build && sam deploy --config-env staging",
+    "deploy:prod": "sam build && sam deploy --config-env production",
+    "logs": "sam logs --stack-name smartbank-api --region ap-southeast-2",
+    "clean": "rm -rf dist node_modules .aws-sam"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.490.0",
+    "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/lib-dynamodb": "^3.490.0",
+    "uuid": "^9.0.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.131",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.10.0",
+    "@types/uuid": "^9.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "dotenv-cli": "^7.4.4",
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "api-gateway",
+    "dynamodb",
+    "cognito",
+    "banking",
+    "fintech",
+    "typescript",
+    "serverless"
+  ],
+  "author": "SmartBank Team"
+}

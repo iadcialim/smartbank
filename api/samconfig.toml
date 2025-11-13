@@ -1,0 +1,101 @@
+# SmartBank SAM Configuration
+# Multi-environment deployment configuration for Australian Mobile Banking App
+
+# Default configuration
+version = 0.1
+
+[default]
+[default.global]
+[default.global.parameters]
+stack_name = "smartbank-api"
+s3_bucket = ""  # Will be created automatically if not specified
+resolve_s3 = true
+s3_prefix = "smartbank-api"
+region = "ap-southeast-2"  # Sydney region for Australian banking
+confirm_changeset = true
+capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
+parameter_overrides = [
+    "Stage=dev",
+    "Environment=development"
+]
+image_repositories = []
+
+# Development environment
+[default.development]
+[default.development.parameters]
+stack_name = "smartbank-api-dev"
+s3_bucket = ""  # Will be created automatically if not specified
+resolve_s3 = true
+s3_prefix = "smartbank-api-dev"
+region = "ap-southeast-2"
+confirm_changeset = true
+capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
+parameter_overrides = [
+    "Stage=dev",
+    "Environment=development"
+]
+image_repositories = []
+
+# Staging environment
+[default.staging]
+[default.staging.parameters]
+stack_name = "smartbank-api-staging"
+s3_bucket = ""  # Will be created automatically if not specified
+resolve_s3 = true
+s3_prefix = "smartbank-api-staging"
+region = "ap-southeast-2"
+confirm_changeset = true
+capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
+parameter_overrides = [
+    "Stage=staging",
+    "Environment=staging"
+]
+image_repositories = []
+
+# Production environment
+[default.production]
+[default.production.parameters]
+stack_name = "smartbank-api-prod"
+s3_bucket = ""  # Will be created automatically if not specified
+resolve_s3 = true
+s3_prefix = "smartbank-api-prod"
+region = "ap-southeast-2"
+confirm_changeset = true
+capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
+parameter_overrides = [
+    "Stage=prod",
+    "Environment=production"
+]
+image_repositories = []
+
+# Local development configuration
+[default.local]
+[default.local.parameters]
+stack_name = "smartbank-api-local"
+s3_bucket = ""  # Will be created automatically if not specified
+resolve_s3 = true
+s3_prefix = "smartbank-api-local"
+region = "ap-southeast-2"
+confirm_changeset = true
+capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
+parameter_overrides = [
+    "Stage=dev",
+    "Environment=development"
+]
+image_repositories = []
+
+# Testing configuration
+[default.test]
+[default.test.parameters]
+stack_name = "smartbank-api-test"
+s3_bucket = ""  # Will be created automatically if not specified
+resolve_s3 = true
+s3_prefix = "smartbank-api-test"
+region = "ap-southeast-2"
+confirm_changeset = true
+capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
+parameter_overrides = [
+    "Stage=dev",
+    "Environment=development"
+]
+image_repositories = []

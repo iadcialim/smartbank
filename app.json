@@ -1,12 +1,52 @@
 {
   "expo": {
-    "scheme": "com.edrickleong.smartbank",
+    "name": "SmartBank",
+    "slug": "smartbank",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/welcome-to-smartbank.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./src/assets/welcome-to-smartbank.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#265565"
+    },
+    "scheme": "com.edrickleong.smartbank",
     "ios": {
-      "bundleIdentifier": "com.edrickleong.smartbank"
+      "supportsTablet": true,
+      "bundleIdentifier": "com.edrickleong.smartbank",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "plugins": [
-      "expo-router"
-    ]
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./src/assets/welcome-to-smartbank.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#265565"
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e097137e-602d-40d4-b376-6cbd9b030275"
+      }
+    },
+    "android": {
+      "package": "com.edrickleong.smartbank",
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/welcome-to-smartbank.png",
+        "backgroundColor": "#265565"
+      }
+    },
+    "owner": "iadcg-cognizant"
   }
 }

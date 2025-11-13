@@ -1,0 +1,1 @@
+{"version":3,"file":"health-check.d.ts","sourceRoot":"","sources":["../../../src/handlers/migration/health-check.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,oBAAoB,EAAE,qBAAqB,EAAE,MAAM,YAAY,CAAC;AAIzE,eAAO,MAAM,OAAO,GAClB,QAAQ,oBAAoB,KAC3B,OAAO,CAAC,qBAAqB,CAuC/B,CAAC"}

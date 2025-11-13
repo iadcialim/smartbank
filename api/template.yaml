@@ -1,0 +1,813 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'SmartBank - Australian Mobile Banking App Backend API'
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs22.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref SmartBankDataTable
+        USER_POOL_ID: !Ref SmartBankUserPool
+        USER_POOL_CLIENT_ID: !Ref SmartBankUserPoolClient
+        REGION: !Ref AWS::Region
+        STAGE: !Ref Stage
+    MemorySize: 512
+    Handler: dist/index.handler
+    CodeUri: ./
+    Layers:
+      - !Ref NodeModulesLayer
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Deployment stage
+  Environment:
+    Type: String
+    Default: development
+    AllowedValues:
+      - development
+      - staging
+      - production
+    Description: Environment name
+
+Conditions:
+  IsProd: !Equals [!Ref Stage, prod]
+  IsDev: !Equals [!Ref Stage, dev]
+
+Resources:
+  # DynamoDB Table - Single Table Design
+  SmartBankDataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'SmartBankData-${Stage}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+        KMSMasterKeyId: !Ref DynamoDBKMSKey
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Stage
+          Value: !Ref Stage
+        - Key: Application
+          Value: SmartBank
+
+  # KMS Key for DynamoDB Encryption
+  DynamoDBKMSKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: !Sub 'KMS key for SmartBank DynamoDB table encryption - ${Stage}'
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action: 'kms:*'
+            Resource: '*'
+          - Sid: Allow DynamoDB Service
+            Effect: Allow
+            Principal:
+              Service: dynamodb.amazonaws.com
+            Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey
+            Resource: '*'
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Stage
+          Value: !Ref Stage
+        - Key: Application
+          Value: SmartBank
+
+  # KMS Key Alias
+  DynamoDBKMSKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub 'alias/smartbank-dynamodb-${Stage}'
+      TargetKeyId: !Ref DynamoDBKMSKey
+
+  # Cognito User Pool
+  SmartBankUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub 'SmartBank-UserPool-${Stage}'
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          TemporaryPasswordValidityDays: 7
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: phone_number
+          AttributeDataType: String
+          Required: false
+          Mutable: true
+        - Name: given_name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: family_name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: birthdate
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: address
+          AttributeDataType: String
+          Required: false
+          Mutable: true
+      MfaConfiguration: "OFF"
+      UserPoolTags:
+        Environment: !Ref Environment
+        Stage: !Ref Stage
+        Application: SmartBank
+
+  # Cognito User Pool Client
+  SmartBankUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref SmartBankUserPool
+      ClientName: !Sub 'SmartBank-Client-${Stage}'
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+        RefreshToken: days
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      SupportedIdentityProviders:
+        - COGNITO
+
+  # Cognito User Pool Domain
+  SmartBankUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref SmartBankUserPool
+      Domain: !Sub 'smartbank-${Stage}-${AWS::AccountId}'
+
+  # API Gateway
+  SmartBankApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'SmartBank-API-${Stage}'
+      StageName: !Ref Stage
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: !If
+          - IsDev
+          - "'*'"
+          - !Sub "'https://smartbank-${Stage}.example.com'"
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt SmartBankUserPool.Arn
+            AuthType: COGNITO_USER_POOLS
+            Identity:
+              Header: Authorization
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: !If
+                - IsDev
+                - "'*'"
+                - !Sub "'https://smartbank-${Stage}.example.com'"
+        DEFAULT_5XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: !If
+                - IsDev
+                - "'*'"
+                - !Sub "'https://smartbank-${Stage}.example.com'"
+      DefinitionBody:
+        openapi: 3.0.1
+        info:
+          title: SmartBank API
+          version: 1.0.0
+          description: Australian Mobile Banking App API
+        paths:
+          /auth/register:
+            post:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthRegisterFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /auth/login:
+            post:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthLoginFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /auth/refresh:
+            post:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthRefreshFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /auth/password-reset:
+            post:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthPasswordResetFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /accounts:
+            get:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AccountsListFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+            post:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AccountsCreateFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /accounts/{accountId}:
+            get:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AccountsGetFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /products:
+            get:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProductsListFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /transfers:
+            post:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TransfersCreateFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /transfers/{transferId}:
+            get:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TransfersGetFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /payments:
+            post:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PaymentsCreateFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /payments/{paymentId}:
+            get:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PaymentsGetFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /accounts/{accountId}/transactions:
+            get:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TransactionsListFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+          /validation/bsb:
+            post:
+              security:
+                - CognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ValidationBSBFunction.Arn}/invocations'
+              responses:
+                '200':
+                  description: 200 response
+
+  # Lambda Layer for Node Modules
+  NodeModulesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub 'SmartBank-NodeModules-${Stage}'
+      Description: Node.js modules for SmartBank Lambda functions
+      ContentUri: ./layers/nodejs
+      CompatibleRuntimes:
+        - nodejs22.x
+      RetentionPolicy: Retain
+
+  # IAM Role for Lambda Functions
+  SmartBankLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'SmartBank-LambdaRole-${Stage}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:BatchGetItem
+                  - dynamodb:BatchWriteItem
+                Resource:
+                  - !GetAtt SmartBankDataTable.Arn
+                  - !Sub '${SmartBankDataTable.Arn}/index/*'
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:GenerateDataKey
+                Resource: !GetAtt DynamoDBKMSKey.Arn
+        - PolicyName: CognitoAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cognito-idp:AdminGetUser
+                  - cognito-idp:AdminCreateUser
+                  - cognito-idp:AdminUpdateUserAttributes
+                  - cognito-idp:AdminDeleteUser
+                  - cognito-idp:AdminSetUserPassword
+                  - cognito-idp:AdminInitiateAuth
+                  - cognito-idp:AdminRespondToAuthChallenge
+                  - cognito-idp:ListUsers
+                Resource: !GetAtt SmartBankUserPool.Arn
+
+  # Authentication Functions
+  AuthRegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-AuthRegister-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/auth/register.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        RegisterApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /auth/register
+            Method: post
+
+  AuthLoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-AuthLogin-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/auth/login.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        LoginApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /auth/login
+            Method: post
+
+  AuthRefreshFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-AuthRefresh-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/auth/refresh.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        RefreshApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /auth/refresh
+            Method: post
+
+  AuthPasswordResetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-AuthPasswordReset-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/auth/password-reset.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        PasswordResetApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /auth/password-reset
+            Method: post
+
+  # Account Management Functions
+  AccountsListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-AccountsList-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/accounts/list-accounts.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        ListAccountsApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /accounts
+            Method: get
+
+  AccountsCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-AccountsCreate-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/accounts/create-account.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        CreateAccountApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /accounts
+            Method: post
+
+  AccountsGetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-AccountsGet-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/accounts/get-account.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        GetAccountApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /accounts/{accountId}
+            Method: get
+
+  ProductsListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-ProductsList-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/accounts/list-products.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        ListProductsApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /products
+            Method: get
+
+  # Transfer Functions
+  TransfersCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-TransfersCreate-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/transfers/create-transfer.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        CreateTransferApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /transfers
+            Method: post
+
+  TransfersGetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-TransfersGet-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/transfers/get-transfer.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        GetTransferApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /transfers/{transferId}
+            Method: get
+
+  # Payment Functions
+  PaymentsCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-PaymentsCreate-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/payments/create-payment.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        CreatePaymentApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /payments
+            Method: post
+
+  PaymentsGetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-PaymentsGet-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/payments/get-payment.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        GetPaymentApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /payments/{paymentId}
+            Method: get
+
+  # Transaction Functions
+  TransactionsListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-TransactionsList-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/transactions/list-transactions.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        ListTransactionsApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /accounts/{accountId}/transactions
+            Method: get
+
+  # Validation Functions
+  ValidationBSBFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'SmartBank-ValidationBSB-${Stage}'
+      CodeUri: ./
+      Handler: dist/handlers/validation/bsb-validation.handler
+      Role: !GetAtt SmartBankLambdaRole.Arn
+      Events:
+        ValidateBSBApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SmartBankApi
+            Path: /validation/bsb
+            Method: post
+
+  # CloudWatch Log Groups
+  AuthRegisterLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-AuthRegister-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  AuthLoginLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-AuthLogin-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  AuthRefreshLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-AuthRefresh-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  AuthPasswordResetLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-AuthPasswordReset-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  AccountsListLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-AccountsList-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  AccountsCreateLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-AccountsCreate-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  AccountsGetLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-AccountsGet-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  ProductsListLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-ProductsList-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  TransfersCreateLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-TransfersCreate-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  TransfersGetLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-TransfersGet-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  PaymentsCreateLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-PaymentsCreate-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  PaymentsGetLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-PaymentsGet-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  TransactionsListLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-TransactionsList-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+  ValidationBSBLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/SmartBank-ValidationBSB-${Stage}'
+      RetentionInDays: !If [IsProd, 30, 7]
+
+Outputs:
+  SmartBankApiUrl:
+    Description: 'SmartBank API Gateway URL'
+    Value: !Sub 'https://${SmartBankApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiUrl'
+
+  SmartBankUserPoolId:
+    Description: 'SmartBank Cognito User Pool ID'
+    Value: !Ref SmartBankUserPool
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolId'
+
+  SmartBankUserPoolClientId:
+    Description: 'SmartBank Cognito User Pool Client ID'
+    Value: !Ref SmartBankUserPoolClient
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolClientId'
+
+  SmartBankDataTableName:
+    Description: 'SmartBank DynamoDB Table Name'
+    Value: !Ref SmartBankDataTable
+    Export:
+      Name: !Sub '${AWS::StackName}-TableName'
+
+  SmartBankDataTableArn:
+    Description: 'SmartBank DynamoDB Table ARN'
+    Value: !GetAtt SmartBankDataTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-TableArn'
+
+  DynamoDBKMSKeyId:
+    Description: 'DynamoDB KMS Key ID'
+    Value: !Ref DynamoDBKMSKey
+    Export:
+      Name: !Sub '${AWS::StackName}-KMSKeyId'
+
+  DynamoDBKMSKeyArn:
+    Description: 'DynamoDB KMS Key ARN'
+    Value: !GetAtt DynamoDBKMSKey.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-KMSKeyArn'

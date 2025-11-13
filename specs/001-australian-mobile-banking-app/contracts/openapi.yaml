@@ -1,0 +1,921 @@
+openapi: 3.0.3
+info:
+  title: SmartBank API
+  description: Australian Mobile Banking App Clone API
+  version: 1.0.0
+  contact:
+    name: SmartBank API Support
+    email: api-support@smartbank.com.au
+  license:
+    name: Proprietary
+    url: https://smartbank.com.au/terms
+
+servers:
+  - url: https://api.smartbank.com.au/v1
+    description: Production server
+  - url: https://staging-api.smartbank.com.au/v1
+    description: Staging server
+  - url: https://dev-api.smartbank.com.au/v1
+    description: Development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Authentication Endpoints
+  /auth/register:
+    post:
+      summary: Register new user
+      description: Create a new user account with email and password
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticate user with email and password
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Get new access token using refresh token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: Invalid refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/password-reset:
+    post:
+      summary: Request password reset
+      description: Send password reset email to user
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        '200':
+          description: Password reset email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResetResponse'
+        '404':
+          description: Email not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Account Management Endpoints
+  /accounts:
+    get:
+      summary: Get user accounts
+      description: Retrieve all accounts for the authenticated user
+      tags:
+        - Accounts
+      responses:
+        '200':
+          description: Accounts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountsResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Create new account
+      description: Open a new account for the authenticated user
+      tags:
+        - Accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accounts/{accountId}:
+    get:
+      summary: Get account details
+      description: Retrieve details for a specific account
+      tags:
+        - Accounts
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Account details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Financial Products Endpoints
+  /products:
+    get:
+      summary: Get financial products
+      description: Retrieve all financial products for the authenticated user
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Transfer Endpoints
+  /transfers:
+    post:
+      summary: Create transfer
+      description: Initiate a transfer between accounts
+      tags:
+        - Transfers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransferRequest'
+      responses:
+        '201':
+          description: Transfer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Insufficient funds or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /transfers/{transferId}:
+    get:
+      summary: Get transfer details
+      description: Retrieve details for a specific transfer
+      tags:
+        - Transfers
+      parameters:
+        - name: transferId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Transfer details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+        '404':
+          description: Transfer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Payment Endpoints
+  /payments:
+    post:
+      summary: Create payment
+      description: Initiate a payment transaction
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+      responses:
+        '201':
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /payments/{paymentId}:
+    get:
+      summary: Get payment details
+      description: Retrieve details for a specific payment
+      tags:
+        - Payments
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Payment details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '404':
+          description: Payment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Transaction History Endpoints
+  /accounts/{accountId}/transactions:
+    get:
+      summary: Get account transactions
+      description: Retrieve transaction history for a specific account
+      tags:
+        - Transactions
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionsResponse'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # BSB Validation Endpoint
+  /validation/bsb:
+    post:
+      summary: Validate BSB
+      description: Validate Australian BSB (Bank State Branch) code
+      tags:
+        - Validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BSBValidationRequest'
+      responses:
+        '200':
+          description: BSB validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BSBValidationResponse'
+        '400':
+          description: Invalid BSB format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Authentication Schemas
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - phoneNumber
+        - dateOfBirth
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 50
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 50
+        phoneNumber:
+          type: string
+          pattern: '^\+61[0-9]{9}$'
+        dateOfBirth:
+          type: string
+          format: date
+
+    RegisterResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        message:
+          type: string
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+
+    RefreshRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+
+    RefreshResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+
+    PasswordResetRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+
+    PasswordResetResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+    # User Schema
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        kycStatus:
+          type: string
+          enum: [PENDING, VERIFIED, REJECTED]
+        mfaEnabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    # Account Schemas
+    CreateAccountRequest:
+      type: object
+      required:
+        - accountType
+        - accountName
+      properties:
+        accountType:
+          type: string
+          enum: [SAVINGS, CHECKING, TERM_DEPOSIT]
+        accountName:
+          type: string
+          minLength: 1
+          maxLength: 100
+
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        accountNumber:
+          type: string
+        bsb:
+          type: string
+        accountType:
+          type: string
+          enum: [SAVINGS, CHECKING, TERM_DEPOSIT]
+        accountName:
+          type: string
+        balance:
+          type: number
+          format: int64
+        availableBalance:
+          type: number
+          format: int64
+        currency:
+          type: string
+          enum: [AUD]
+        status:
+          type: string
+          enum: [ACTIVE, SUSPENDED, CLOSED]
+        interestRate:
+          type: number
+        dailyTransferLimit:
+          type: number
+          format: int64
+        monthlyTransferLimit:
+          type: number
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+
+    AccountResponse:
+      allOf:
+        - $ref: '#/components/schemas/Account'
+
+    AccountsResponse:
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+
+    # Financial Product Schemas
+    FinancialProduct:
+      type: object
+      properties:
+        productId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        productType:
+          type: string
+          enum: [DEBIT_CARD, CREDIT_CARD]
+        productName:
+          type: string
+        cardNumber:
+          type: string
+        expiryDate:
+          type: string
+        status:
+          type: string
+          enum: [ACTIVE, BLOCKED, EXPIRED]
+        dailyLimit:
+          type: number
+          format: int64
+        monthlyLimit:
+          type: number
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+
+    ProductsResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/FinancialProduct'
+
+    # Transfer Schemas
+    CreateTransferRequest:
+      type: object
+      required:
+        - sourceAccountId
+        - amount
+        - transferType
+      properties:
+        sourceAccountId:
+          type: string
+          format: uuid
+        destinationAccountId:
+          type: string
+          format: uuid
+        destinationBSB:
+          type: string
+          pattern: '^[0-9]{6}$'
+        destinationAccountNumber:
+          type: string
+        destinationAccountName:
+          type: string
+        amount:
+          type: number
+          format: int64
+          minimum: 1
+        transferType:
+          type: string
+          enum: [INTERNAL, EXTERNAL]
+        reference:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 200
+
+    Transfer:
+      type: object
+      properties:
+        transferId:
+          type: string
+          format: uuid
+        sourceAccountId:
+          type: string
+          format: uuid
+        destinationAccountId:
+          type: string
+          format: uuid
+        destinationBSB:
+          type: string
+        destinationAccountNumber:
+          type: string
+        destinationAccountName:
+          type: string
+        amount:
+          type: number
+          format: int64
+        currency:
+          type: string
+          enum: [AUD]
+        transferType:
+          type: string
+          enum: [INTERNAL, EXTERNAL]
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED]
+        reference:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+
+    TransferResponse:
+      allOf:
+        - $ref: '#/components/schemas/Transfer'
+
+    # Payment Schemas
+    CreatePaymentRequest:
+      type: object
+      required:
+        - accountId
+        - paymentType
+        - amount
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        paymentType:
+          type: string
+          enum: [BPAY, DIRECT_DEBIT, ONLINE_PURCHASE, UTILITY_BILL, CREDIT_CARD]
+        amount:
+          type: number
+          format: int64
+          minimum: 1
+        recipient:
+          type: string
+        recipientAccount:
+          type: string
+        bpayReference:
+          type: string
+        billerCode:
+          type: string
+        reference:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 200
+
+    Payment:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        paymentType:
+          type: string
+          enum: [BPAY, DIRECT_DEBIT, ONLINE_PURCHASE, UTILITY_BILL, CREDIT_CARD]
+        amount:
+          type: number
+          format: int64
+        currency:
+          type: string
+          enum: [AUD]
+        recipient:
+          type: string
+        recipientAccount:
+          type: string
+        bpayReference:
+          type: string
+        billerCode:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED]
+        reference:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+
+    PaymentResponse:
+      allOf:
+        - $ref: '#/components/schemas/Payment'
+
+    # Transaction Schemas
+    Transaction:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        transactionType:
+          type: string
+          enum: [TRANSFER_IN, TRANSFER_OUT, PAYMENT, DEPOSIT, WITHDRAWAL]
+        amount:
+          type: number
+          format: int64
+        currency:
+          type: string
+          enum: [AUD]
+        description:
+          type: string
+        reference:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, COMPLETED, FAILED, CANCELLED]
+        createdAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+
+    TransactionsResponse:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        pagination:
+          type: object
+          properties:
+            limit:
+              type: integer
+            offset:
+              type: integer
+            total:
+              type: integer
+            hasMore:
+              type: boolean
+
+    # Validation Schemas
+    BSBValidationRequest:
+      type: object
+      required:
+        - bsb
+      properties:
+        bsb:
+          type: string
+          pattern: '^[0-9]{6}$'
+
+    BSBValidationResponse:
+      type: object
+      properties:
+        isValid:
+          type: boolean
+        bankName:
+          type: string
+        branchName:
+          type: string
+        address:
+          type: string
+
+    # Error Schema
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+        details:
+          type: object
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Accounts
+    description: Account management operations
+  - name: Products
+    description: Financial products management
+  - name: Transfers
+    description: Fund transfer operations
+  - name: Payments
+    description: Payment processing operations
+  - name: Transactions
+    description: Transaction history and details
+  - name: Validation
+    description: Data validation services
